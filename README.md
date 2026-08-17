@@ -2,7 +2,35 @@
 
 MenuKita is an AI food compatibility assistant for groups navigating unfamiliar menus. A user completes a short food-profile questionnaire, joins a preset demo group, uploads a menu image, and receives evidence-aware recommendations for the whole group and each member.
 
-This repository is currently in the specification phase. Application code has not been scaffolded yet.
+This repository contains the shared Next.js starter, typed domain contracts, and OpenSpec implementation plan. Product UI and agent integrations are developed against those contracts.
+
+## Local development
+
+Requirements:
+
+- Node.js 20.9 or newer
+- npm
+
+Install and run:
+
+```bash
+npm install
+cp .env.example .env.local
+npm run dev
+```
+
+Add real credentials only to `.env` or `.env.local`; both are ignored by Git. Never put secrets in `.env.example`.
+
+Available checks:
+
+```bash
+npm run lint
+npm run typecheck
+npm run test
+npm run build
+```
+
+Shared Zod schemas and inferred TypeScript types live in `src/lib/schemas/`. UI work should use these contracts or typed fixtures derived from them.
 
 ## Locked prototype scope
 

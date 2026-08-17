@@ -1,8 +1,8 @@
 ## 1. Project foundation
 
-- [ ] 1.1 Scaffold a Next.js App Router project with TypeScript, Tailwind CSS, linting, and test tooling
-- [ ] 1.2 Add environment validation and an `.env.example` for server-only OpenAI and Tavily keys
-- [ ] 1.3 Define Zod schemas and TypeScript types for profiles, groups, dishes, evidence, statuses, recommendations, and questions
+- [x] 1.1 Scaffold a Next.js App Router project with TypeScript, Tailwind CSS, linting, and test tooling
+- [x] 1.2 Add environment validation and an `.env.example` for server-only OpenAI and Tavily keys
+- [x] 1.3 Define Zod schemas and TypeScript types for profiles, groups, dishes, evidence, statuses, recommendations, and questions
 
 ## 2. Profile and group journey
 

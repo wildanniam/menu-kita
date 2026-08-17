@@ -37,12 +37,12 @@ Collaborators MUST update OpenSpec artifacts whenever implementation, review, or
 - **WHEN** implementation or review reveals additional required work
 - **THEN** that work is added to the governing OpenSpec task list before it is implemented
 
-### Requirement: Validation and pull-request linkage
-Every pull request MUST identify its governing OpenSpec change, report task status, and be preceded by strict validation of that change.
+### Requirement: Validation before completion
+Every governing OpenSpec change MUST pass strict validation before it is treated as complete or synchronized as ready for collaborators.
 
-#### Scenario: Prepare a pull request
-- **WHEN** repository changes are ready for review
-- **THEN** `openspec validate <change> --strict` succeeds and the pull-request body links the OpenSpec change path and summarizes incomplete tasks, if any
+#### Scenario: Complete or share repository work
+- **WHEN** repository changes are ready to be treated as complete or synchronized for collaborators
+- **THEN** `openspec validate <change> --strict` succeeds and task status accurately reflects the implementation
 
 #### Scenario: Validation fails
 - **WHEN** strict OpenSpec validation reports an error
@@ -60,5 +60,15 @@ The mandatory workflow MUST be documented in repository entry points read by hum
 
 #### Scenario: Fresh collaborator opens repository
 - **WHEN** a human or coding agent reads README.md or AGENTS.md
-- **THEN** they can identify the mandatory pre-edit, during-work, pre-PR, and post-completion OpenSpec steps without relying on chat history
+- **THEN** they can identify the mandatory pre-edit, during-work, validation, and post-completion OpenSpec steps without relying on chat history
 
+### Requirement: Lightweight Git collaboration
+GitHub issues, feature branches, and pull requests SHALL be optional for the hackathon workflow and MUST NOT block work that is fully tracked and validated through OpenSpec.
+
+#### Scenario: Fast collaborative update
+- **WHEN** a collaborator completes an OpenSpec-tracked and validated update
+- **THEN** they can synchronize it directly without creating a GitHub issue or pull request
+
+#### Scenario: Higher-risk or conflicting work
+- **WHEN** collaborators decide that isolated review or conflict prevention would materially help a change
+- **THEN** they can optionally use a branch or pull request without changing the OpenSpec tracking requirement

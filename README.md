@@ -38,7 +38,7 @@ OpenSpec is the mandatory shared agreement layer for humans and coding agents. *
 2. **Before implementing:** ensure every intended edit maps to a checkbox task in that change.
 3. **During work:** update proposal, requirements, design, risks, and tasks whenever decisions or scope change. Do not leave decisions only in chat.
 4. **After each task:** verify its outcome, then mark its checkbox complete.
-5. **Before PR:** run strict validation and include the change path plus task status in the PR body.
+5. **Before completion or sync:** run strict validation and confirm task status is accurate.
 6. **After acceptance:** archive the completed change and verify its specs are synchronized.
 
 ```bash
@@ -47,17 +47,17 @@ openspec status --change build-menukita-group-demo
 openspec validate build-menukita-group-demo --strict
 ```
 
-Example traceability in a pull request:
+Example collaboration checkpoint:
 
 ```text
-OpenSpec change: openspec/changes/build-menukita-group-demo/
-Tasks completed: 1.1, 1.2, 1.3
+Governing change: openspec/changes/build-menukita-group-demo/
+Current tasks: openspec/changes/build-menukita-group-demo/tasks.md
 Validation: openspec validate build-menukita-group-demo --strict
 ```
 
 In a Codex chat, use the generated OpenSpec skills to explore requirements, propose a change, apply approved tasks, and archive completed changes.
 
-For parallel work, use separate branches and OpenSpec changes when scopes can be isolated. Coordinate edits to shared schemas, routing, and dependencies before implementation.
+GitHub issues, feature branches, and pull requests are optional for this hackathon. For speed, collaborators can synchronize small validated updates directly. Pull before editing, keep commits focused, and coordinate edits to shared schemas, routing, dependencies, and OpenSpec artifacts. Use a branch or review only when concurrent work or risk makes it useful.
 
 The full normative policy is defined by [`AGENTS.md`](./AGENTS.md) and the [`openspec-change-governance` specification](./openspec/changes/enforce-openspec-change-tracking/specs/openspec-change-governance/spec.md).
 

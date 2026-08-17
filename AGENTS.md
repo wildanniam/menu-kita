@@ -26,19 +26,20 @@ During work:
 - Mark a task complete only after its outcome is implemented and verified.
 - Never leave a material decision only in chat, an issue, a commit message, or a pull-request comment.
 
-Before presenting a pull request as ready:
+Before treating work as complete or synchronizing it for collaborators:
 
 1. Run `openspec validate <change> --strict` successfully.
-2. Include the change name/path and task progress in the pull-request body.
+2. Confirm task progress accurately reflects implemented and verified work.
 3. Commit the governing OpenSpec artifacts alongside the files they govern.
-4. State any incomplete tasks or deviations explicitly.
+4. State any incomplete tasks or deviations in the relevant OpenSpec artifacts.
 
 After a completed change is accepted, archive it through OpenSpec and verify that its specifications are synchronized into the durable project specs.
 
 ## Collaboration workflow
 
 - Use a separate OpenSpec change for new scope that is not part of `build-menukita-group-demo`.
-- Use issue-driven branches and pull requests for meaningful implementation work.
+- GitHub issues, feature branches, and pull requests are optional for this time-boxed hackathon; do not make them a prerequisite for OpenSpec-tracked work.
+- Prefer small direct updates for speed, pull before editing, and coordinate ownership when collaborators may touch the same files.
 - Do not implement unapproved scope or silently rewrite another collaborator's visual or domain decisions.
 - Moomina leads the brand system and UI presentation. Preserve her work and coordinate before changing shared UI foundations.
 - Final preset group data and demo images are pending inputs from Wildan.

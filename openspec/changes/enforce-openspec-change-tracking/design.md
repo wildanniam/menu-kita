@@ -8,13 +8,13 @@ MenuKita uses OpenSpec as its shared agreement layer, but the existing documenta
 
 - Make OpenSpec tracking mandatory before any repository edit.
 - Provide a simple lifecycle that a fresh human or coding agent can follow.
-- Connect implementation tasks, evolving decisions, validation, pull requests, and archival.
+- Connect implementation tasks, evolving decisions, validation, collaboration sync, and archival.
 - Apply the rule consistently to code, documentation, configuration, dependencies, and generated files.
 
 **Non-Goals:**
 
 - Add a new CI check or Git hook in this documentation-only change.
-- Replace GitHub issues, branches, reviews, or tests with OpenSpec.
+- Make GitHub issues, branches, reviews, or tests mandatory when OpenSpec tracking already covers the work.
 - Require a separate OpenSpec change for every file when several files belong to one coherent change.
 
 ## Decisions
@@ -32,8 +32,8 @@ The contribution lifecycle is:
 3. Ensure proposal/spec/design/tasks describe the work before other files are edited.
 4. Implement only mapped tasks and update artifacts when decisions change.
 5. Mark tasks complete immediately after implementation and verification.
-6. Run strict validation before presenting a pull request as ready.
-7. Include change name/path and task status in the pull-request body.
+6. Run strict validation before treating the change as complete or synchronizing it as ready for collaborators.
+7. Synchronize the small validated update directly; use GitHub issues, branches, or pull requests only when the team finds them useful.
 8. Archive the accepted completed change and verify synced specifications.
 
 Planning artifacts and the archival operation are tracked by the same governing change. There is no exemption for tiny or urgent edits; a minimal coherent change is acceptable.
@@ -44,7 +44,7 @@ Place the normative agent instruction in `AGENTS.md` and the human collaboration
 
 ### Relationship to GitHub workflow
 
-OpenSpec records product intent and implementation state; GitHub records discussion, review, and integration. Issues and PRs must reference the governing change, while OpenSpec artifacts must be committed alongside the implementation they govern. Neither system replaces the other.
+OpenSpec is the mandatory record of product intent and implementation state. GitHub issues, feature branches, and pull requests are optional coordination mechanisms, not gates. Small hackathon updates can be committed and synchronized directly once their OpenSpec artifacts, tasks, and validation are current. Collaborators can still use isolation or review when risk or concurrent edits justify it.
 
 ## Risks / Trade-offs
 
@@ -57,7 +57,7 @@ OpenSpec records product intent and implementation state; GitHub records discuss
 
 1. Add this governance change before modifying repository guidance.
 2. Update README.md and AGENTS.md with the mandatory lifecycle.
-3. Validate this change strictly, commit it with the documentation, and link it in the pull request.
+3. Validate this change strictly and commit it with the documentation.
 4. Apply the workflow to every subsequent repository update.
 5. Archive this change after acceptance.
 

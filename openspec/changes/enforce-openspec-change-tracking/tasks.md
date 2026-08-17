@@ -8,4 +8,4 @@
 
 - [x] 2.1 Verify that fresh collaborators can identify the complete mandatory workflow from repository entry points
 - [x] 2.2 Run strict OpenSpec validation and review the documentation diff for contradictions
-- [ ] 2.3 Commit the governance change, push its issue branch, and open a pull request linked to issue #1
+- [x] 2.3 Commit the governance change, push its issue branch, and open a pull request linked to issue #1

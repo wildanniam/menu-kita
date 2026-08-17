@@ -16,8 +16,8 @@
 ## 3. Menu extraction
 
 - [ ] 3.1 Build menu image selection, validation, preview, removal, and retry states
-- [ ] 3.2 Implement the server-only OpenAI adapter and structured GPT-4o mini menu extraction
-- [ ] 3.3 Validate extraction output, preserve unreadable fields, and add one controlled schema-repair attempt
+- [x] 3.2 Implement the server-only OpenAI adapter and structured GPT-4o mini menu extraction
+- [x] 3.3 Validate extraction output, preserve unreadable fields, and add one controlled schema-repair attempt
 
 ## 4. Bounded agentic research
 

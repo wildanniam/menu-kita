@@ -34,6 +34,8 @@ Shared Zod schemas and inferred TypeScript types live in `src/lib/schemas/`. UI 
 
 The replaceable five-person group lives in `src/lib/data/demo-group.ts`. Contract-valid menu, compatibility, recommendation, question, and progress fixtures live in `src/lib/fixtures/demo-analysis.ts`, so UI work can proceed before the live analysis route is connected.
 
+The server-only GPT-4o mini adapter lives in `src/lib/server/openai-menu-extraction.ts`. Its validation and single repair-attempt workflow is isolated in `src/lib/ai/menu-extraction.ts` so it can be tested without making API calls.
+
 ## Locked prototype scope
 
 - English, responsive group-only web experience

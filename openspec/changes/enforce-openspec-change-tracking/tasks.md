@@ -14,4 +14,4 @@
 
 - [x] 3.1 Revise governance artifacts so OpenSpec remains mandatory while GitHub issues, feature branches, and pull requests become optional
 - [x] 3.2 Update repository guidance and remove the mandatory pull-request template
-- [ ] 3.3 Validate the revised workflow, synchronize it to main, and close the superseded issue and pull request
+- [x] 3.3 Validate the revised workflow, synchronize it to main, and close the superseded issue and pull request

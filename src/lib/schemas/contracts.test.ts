@@ -1,11 +1,14 @@
 import { describe, expect, it } from "vitest";
 
 import {
+  analysisStreamEventSchema,
   analysisResultSchema,
   evidenceSchema,
   foodProfileSchema,
   memberDishCompatibilitySchema,
 } from ".";
+import { buildDemoGroup, demoCurrentUser, presetGroupMembers } from "../data";
+import { demoAnalysisResult, demoAnalysisStream } from "../fixtures";
 
 describe("MenuKita shared contracts", () => {
   it("parses a normalized food profile", () => {
@@ -83,5 +86,24 @@ describe("MenuKita shared contracts", () => {
     });
 
     expect(result.success).toBe(true);
+  });
+
+  it("builds the approved five-person demo group", () => {
+    const group = buildDemoGroup(demoCurrentUser);
+
+    expect(presetGroupMembers).toHaveLength(4);
+    expect(group.members.map(({ name }) => name)).toEqual([
+      "Wildan",
+      "Madhoolika",
+      "Harsh",
+      "Moomina",
+      "Victor",
+    ]);
+  });
+
+  it("keeps analysis and streamed UI fixtures contract-valid", () => {
+    expect(analysisResultSchema.safeParse(demoAnalysisResult).success).toBe(true);
+    expect(analysisStreamEventSchema.array().safeParse(demoAnalysisStream).success).toBe(true);
+    expect(demoAnalysisStream.at(-1)?.type).toBe("result");
   });
 });

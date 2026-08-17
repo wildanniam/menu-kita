@@ -32,6 +32,8 @@ npm run build
 
 Shared Zod schemas and inferred TypeScript types live in `src/lib/schemas/`. UI work should use these contracts or typed fixtures derived from them.
 
+The replaceable five-person group lives in `src/lib/data/demo-group.ts`. Contract-valid menu, compatibility, recommendation, question, and progress fixtures live in `src/lib/fixtures/demo-analysis.ts`, so UI work can proceed before the live analysis route is connected.
+
 ## Locked prototype scope
 
 - English, responsive group-only web experience
@@ -92,7 +94,7 @@ The full normative policy is defined by [`AGENTS.md`](./AGENTS.md) and the [`ope
 ## Current collaboration inputs
 
 - Moomina is researching the brand system and visual direction and is expected to lead UI presentation work.
-- Wildan will provide final preset group profiles and primary/backup demo menu images.
+- The five-member demo group is approved; Wildan will provide primary/backup demo menu images and the team can add final avatar assets later.
 - The implementation task list deliberately isolates those inputs from domain and agent architecture.
 
 ### Suggested parallel ownership

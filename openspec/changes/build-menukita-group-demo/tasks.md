@@ -3,12 +3,12 @@
 - [x] 1.1 Scaffold a Next.js App Router project with TypeScript, Tailwind CSS, linting, and test tooling
 - [x] 1.2 Add environment validation and an `.env.example` for server-only OpenAI and Tavily keys
 - [x] 1.3 Define Zod schemas and TypeScript types for profiles, groups, dishes, evidence, statuses, recommendations, and questions
-- [ ] 1.4 Add contract-valid fixtures for dummy group profiles, menu analysis results, and streamed stage events
+- [x] 1.4 Add contract-valid fixtures for preset group profiles, menu analysis results, and streamed stage events
 - [x] 1.5 Document the phased development plan, task ownership, integration gates, scope-cut order, and authorized deployment step
 
 ## 2. Profile and group journey
 
-- [ ] 2.1 Add the replaceable preset group data module using approved dummy members until final details are supplied
+- [x] 2.1 Add the replaceable preset group data module using the approved five-person group
 - [ ] 2.2 Build the English onboarding questionnaire with validation and browser persistence
 - [ ] 2.3 Build existing-group selection and a group overview combining the current user with preset members
 - [ ] 2.4 Add navigation, reset, and reload behavior for the complete pre-scan journey
@@ -46,5 +46,5 @@
 - [ ] 7.2 Add API input limits, safe error responses, basic request throttling, and checks preventing secret exposure
 - [ ] 7.3 Add integration tests for questionnaire-to-group flow and agent fallback behavior using deterministic fixtures
 - [ ] 7.4 Run lint, type checks, tests, production build, and browser checks across mobile and desktop widths
-- [ ] 7.5 Verify the exact primary and backup menu images with final group profiles and document the live demo sequence and fallback plan
+- [ ] 7.5 Verify the exact primary and backup menu images with the approved group profiles and document the live demo sequence and fallback plan
 - [ ] 7.6 After explicit authorization, configure Vercel environment variables, deploy, and smoke-test the production demo

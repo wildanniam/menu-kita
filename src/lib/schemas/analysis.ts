@@ -33,6 +33,34 @@ export const analysisResultSchema = z.object({
   restaurantQuestions: z.array(restaurantQuestionSchema).default([]),
 });
 
+export const analysisStageEventSchema = z.object({
+  type: z.literal("stage"),
+  stage: analysisStageSchema,
+  message: z.string().trim().min(1),
+});
+
+export const analysisResultEventSchema = z.object({
+  type: z.literal("result"),
+  data: analysisResultSchema,
+});
+
+export const analysisErrorEventSchema = z.object({
+  type: z.literal("error"),
+  code: z.string().trim().min(1),
+  message: z.string().trim().min(1),
+  retryable: z.boolean(),
+});
+
+export const analysisStreamEventSchema = z.discriminatedUnion("type", [
+  analysisStageEventSchema,
+  analysisResultEventSchema,
+  analysisErrorEventSchema,
+]);
+
 export type AnalysisStage = z.infer<typeof analysisStageSchema>;
 export type RestaurantQuestion = z.infer<typeof restaurantQuestionSchema>;
 export type AnalysisResult = z.infer<typeof analysisResultSchema>;
+export type AnalysisStageEvent = z.infer<typeof analysisStageEventSchema>;
+export type AnalysisResultEvent = z.infer<typeof analysisResultEventSchema>;
+export type AnalysisErrorEvent = z.infer<typeof analysisErrorEventSchema>;
+export type AnalysisStreamEvent = z.infer<typeof analysisStreamEventSchema>;

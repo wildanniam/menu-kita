@@ -1,6 +1,6 @@
 ## Context
 
-MenuKita is a greenfield, one-day hackathon prototype for an international audience. It must demonstrate a real end-to-end group flow and a bounded agentic research process while remaining reliable enough for a live demo. The repository currently contains only product context and OpenSpec artifacts. Final preset member values and visual direction will be supplied separately and must remain isolated from core logic.
+MenuKita is a greenfield, one-day hackathon prototype for an international audience. It must demonstrate a real end-to-end group flow and a bounded agentic research process while remaining reliable enough for a live demo. Preset member values and visual direction must remain isolated from core logic.
 
 ## Goals / Non-Goals
 
@@ -28,6 +28,8 @@ Use Next.js App Router with TypeScript and Tailwind CSS. Keep the application as
 ### Replaceable preset data
 
 Store group metadata and preset member profiles in a typed source module. Add the questionnaire profile at runtime without mutating the preset object. This lets the team replace names and restrictions later without editing matching or UI logic.
+
+The approved demo group contains five people total: the current user, Wildan, whose answers come from onboarding; Madhoolika, who is vegan; Harsh, who does not eat beef; Moomina, who has a seafood allergy; and Victor, who is lactose intolerant. Store the latter four as preset members and use a Wildan sample profile only for fixture-driven development and tests. Profiles appear as normal members in the product; fixture provenance is an implementation concern, not a user-facing label.
 
 ### Structured contracts
 
@@ -77,7 +79,7 @@ Use a prepared clear image and keep a second image available outside the applica
 
 Provide source-controlled fixtures that satisfy the shared Zod contracts for preset profiles, extracted dishes, evidence, compatibility results, recommendations, questions, and stage events. Moomina can build presentation components against these fixtures while core integrations are developed independently. Fixtures must be clearly labeled as development data and replaced by the live `/api/analyze` response during integration; they must never be presented as a successful live analysis.
 
-Use simple dummy group members until Wildan supplies final profiles. Keep those values in one typed data module so replacing names, restrictions, preferences, and avatars does not change UI or agent logic.
+Keep the approved group values in one typed data module so replacing restrictions, preferences, or avatars does not change UI or agent logic.
 
 ## Development Execution Plan
 
@@ -107,7 +109,7 @@ UI flow             Core agent
 
 ### Wave 1 — unblock parallel work
 
-- Core: add typed dummy group and complete analysis/stage fixtures.
+- Core: add the typed preset group and complete analysis/stage fixtures.
 - UI: build onboarding, group selection/overview, upload, progress, and result screens against fixtures.
 - Integration contract: UI imports shared schemas/types and consumes the same event/result shapes as the future route.
 - Exit gate: all planned screens can be navigated using fixtures; contracts parse successfully; no brand-specific decisions are required.
@@ -116,12 +118,12 @@ UI flow             Core agent
 
 | Workstream | Primary owner | OpenSpec tasks |
 | --- | --- | --- |
-| Shared fixtures and dummy group data | Wildan | 1.4, 2.1 |
+| Shared fixtures and preset group data | Wildan | 1.4, 2.1 |
 | Onboarding, group, upload, and result presentation | Moomina | 2.2–2.4, 3.1, 6.1–6.2, 6.4, 7.1 |
 | OpenAI extraction and Tavily research | Wildan | 3.2–4.4 |
 | Compatibility, ranking, and generated questions | Wildan | 5.1–5.4, 6.3 |
 | Security, integration tests, and automated checks | Wildan | 7.2–7.4 |
-| Final profiles, menu QA, brand pass, and deployment decision | Shared | 7.5–7.6 |
+| Menu QA, avatar/brand pass, and deployment decision | Shared | 7.5–7.6 |
 
 Wildan owns shared contract changes after Wave 1. Moomina should raise UI-driven contract needs in OpenSpec before either side changes schemas, preventing parallel edits from silently diverging.
 
@@ -149,7 +151,7 @@ Wildan owns shared contract changes after Wave 1. Moomina should raise UI-driven
 
 ### Wave 5 — demo readiness
 
-- Replace dummy profiles with final supplied values.
+- Confirm the approved profiles and add final avatar assets if available.
 - Test primary and backup menu images and record expected outputs.
 - Rehearse the story, confirmation question, fallback behavior, and no-shared-dish case.
 - Deploy only after explicit authorization, configure production environment variables, and perform a production smoke test.
@@ -172,7 +174,7 @@ Do not cut evidence provenance, hard-restriction precedence, uncertainty wording
 - [General recipes are mistaken for restaurant facts] → Preserve evidence types and use explicit non-confirmation wording throughout the UI.
 - [Deterministic rules miss synonyms] → Normalize a deliberately small ingredient alias set and keep uncertain semantic matches as confirmation rather than compatibility.
 - [Public endpoints consume API credits] → Keep keys server-side and add lightweight file/request/rate limits appropriate for the demo.
-- [Final profiles or visual design arrive late] → Isolate both as replaceable data and presentation concerns.
+- [Avatar assets or visual design arrive late] → Isolate both as replaceable data and presentation concerns.
 
 ## Migration Plan
 
@@ -186,6 +188,6 @@ Rollback consists of reverting the deployment or disabling the deployed project;
 
 ## Open Questions
 
-- Final values and avatars for the preset group members; dummy typed values are approved until supplied.
+- Final avatar assets for the preset group members; initials can be used until supplied.
 - Final visual system supplied by the design collaborator; neutral fixture UI is approved meanwhile.
 - Exact demo menu image and expected dish set for acceptance testing; this is required for Wave 5, not earlier development.

@@ -44,7 +44,7 @@ Implement explicit server-side orchestration rather than an autonomous loop:
 5. TypeScript rules evaluate explicit hard conflicts; the model assists with semantic normalization and preferences.
 6. The server ranks group and per-member candidates and generates bilingual questions.
 
-Expose only these high-level stages to the client. Do not expose chain-of-thought. Prefer a streaming event response or discrete stage endpoint contract only if it can report real completed work; otherwise show the current server operation without fabricated fine-grained progress.
+Expose only these high-level stages to the client. Do not expose chain-of-thought. Use one streaming `POST /api/analyze` route with newline-delimited JSON events so the client receives real stage transitions and one final validated result without coordinating several public endpoints. The event union contains stage, result, and safe error records. If streaming cannot be completed reliably, fall back to one honest active-analysis state rather than fabricated fine-grained progress.
 
 ### Direct orchestration without an agent framework
 
@@ -73,6 +73,98 @@ Keep `OPENAI_API_KEY` and `TAVILY_API_KEY` in server-only environment variables.
 
 Use a prepared clear image and keep a second image available outside the application. Add retry and reset paths, retain extraction when Tavily fails, and test the exact demo profiles/menu before presentation. Do not ship hardcoded analysis output disguised as a live result.
 
+### Fixture-first UI collaboration
+
+Provide source-controlled fixtures that satisfy the shared Zod contracts for preset profiles, extracted dishes, evidence, compatibility results, recommendations, questions, and stage events. Moomina can build presentation components against these fixtures while core integrations are developed independently. Fixtures must be clearly labeled as development data and replaced by the live `/api/analyze` response during integration; they must never be presented as a successful live analysis.
+
+Use simple dummy group members until Wildan supplies final profiles. Keep those values in one typed data module so replacing names, restrictions, preferences, and avatars does not change UI or agent logic.
+
+## Development Execution Plan
+
+### Current baseline
+
+- Next.js, TypeScript, Tailwind CSS, linting, tests, and production build are operational.
+- OpenAI and Tavily credentials are present locally and authentication smoke checks pass.
+- Server environment validation and shared Zod contracts are implemented.
+- No onboarding, group flow, upload flow, AI adapter, research adapter, compatibility engine, results UI, or deployment exists yet.
+
+### Delivery graph
+
+```text
+Foundation + contracts (complete)
+             |
+      Typed fixtures
+       /           \
+UI flow             Core agent
+(Moomina)            (Wildan)
+       \           /
+       Live integration
+              |
+      Demo QA + brand pass
+              |
+       Authorized deploy
+```
+
+### Wave 1 — unblock parallel work
+
+- Core: add typed dummy group and complete analysis/stage fixtures.
+- UI: build onboarding, group selection/overview, upload, progress, and result screens against fixtures.
+- Integration contract: UI imports shared schemas/types and consumes the same event/result shapes as the future route.
+- Exit gate: all planned screens can be navigated using fixtures; contracts parse successfully; no brand-specific decisions are required.
+
+### Suggested task ownership
+
+| Workstream | Primary owner | OpenSpec tasks |
+| --- | --- | --- |
+| Shared fixtures and dummy group data | Wildan | 1.4, 2.1 |
+| Onboarding, group, upload, and result presentation | Moomina | 2.2–2.4, 3.1, 6.1–6.2, 6.4, 7.1 |
+| OpenAI extraction and Tavily research | Wildan | 3.2–4.4 |
+| Compatibility, ranking, and generated questions | Wildan | 5.1–5.4, 6.3 |
+| Security, integration tests, and automated checks | Wildan | 7.2–7.4 |
+| Final profiles, menu QA, brand pass, and deployment decision | Shared | 7.5–7.6 |
+
+Wildan owns shared contract changes after Wave 1. Moomina should raise UI-driven contract needs in OpenSpec before either side changes schemas, preventing parallel edits from silently diverging.
+
+### Wave 2 — prove risky integrations
+
+- Implement GPT-4o mini image extraction with structured output and one repair attempt.
+- Implement the bounded Tavily adapter and provenance normalization.
+- Implement deterministic restriction precedence and unit tests before AI-assisted preference explanations.
+- Exit gate: one clear test menu produces validated dishes and sourced research; Tavily failure degrades to unresolved evidence instead of failing the scan.
+
+### Wave 3 — assemble the bounded agent
+
+- Let GPT-4o mini select material research needs within application limits.
+- Run independent Tavily searches concurrently where safe.
+- Normalize evidence, enforce deterministic hard conflicts, calculate preferences, rank recommendations, and generate bilingual questions.
+- Stream truthful stage events and the final result from `POST /api/analyze`.
+- Exit gate: a real scan completes end to end and never lets preference scores override a hard conflict.
+
+### Wave 4 — integrate and harden
+
+- Replace UI fixture transport with the live streamed route while retaining fixtures for deterministic tests.
+- Add upload limits, safe errors, timeout behavior, basic throttling, reset/retry, and secret-exposure checks.
+- Test mobile and desktop behavior; Moomina applies the final brand system without changing domain contracts.
+- Exit gate: core paths and failure paths work in browser with no console errors and all automated checks pass.
+
+### Wave 5 — demo readiness
+
+- Replace dummy profiles with final supplied values.
+- Test primary and backup menu images and record expected outputs.
+- Rehearse the story, confirmation question, fallback behavior, and no-shared-dish case.
+- Deploy only after explicit authorization, configure production environment variables, and perform a production smoke test.
+
+### Scope-cut order
+
+If time becomes constrained, preserve the live personal-to-group scan and cut in this order:
+
+1. Extra visual polish and nonessential motion.
+2. Multiple group choices or member editing.
+3. A second research attempt per dish.
+4. Advanced preference explanations.
+
+Do not cut evidence provenance, hard-restriction precedence, uncertainty wording, restaurant questions, or the real menu scan.
+
 ## Risks / Trade-offs
 
 - [GPT-4o mini misreads decorative or small text] → Use a clear demo image, validate structured output, show uncertainty, and provide retry/reset.
@@ -94,6 +186,6 @@ Rollback consists of reverting the deployment or disabling the deployed project;
 
 ## Open Questions
 
-- Final values and avatars for the preset group members.
-- Final visual system supplied by the design collaborator.
-- Exact demo menu image and expected dish set for acceptance testing.
+- Final values and avatars for the preset group members; dummy typed values are approved until supplied.
+- Final visual system supplied by the design collaborator; neutral fixture UI is approved meanwhile.
+- Exact demo menu image and expected dish set for acceptance testing; this is required for Wave 5, not earlier development.

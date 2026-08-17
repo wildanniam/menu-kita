@@ -21,7 +21,7 @@
 
 ## 4. Bounded agentic research
 
-- [ ] 4.1 Implement the Tavily provider adapter with basic search, source normalization, timeout, and request limits
+- [x] 4.1 Implement the Tavily provider adapter with basic search, source normalization, timeout, and request limits
 - [ ] 4.2 Implement the research planner that selects only material unknowns and enforces per-scan and per-dish limits
 - [ ] 4.3 Implement researched-claim normalization with menu-listed, common-usage, and unresolved provenance
 - [ ] 4.4 Connect extraction, planning, research, and synthesis into a streaming `POST /api/analyze` workflow with truthful stage events and graceful degradation

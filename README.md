@@ -36,6 +36,8 @@ The replaceable five-person group lives in `src/lib/data/demo-group.ts`. Contrac
 
 The server-only GPT-4o mini adapter lives in `src/lib/server/openai-menu-extraction.ts`. Its validation and single repair-attempt workflow is isolated in `src/lib/ai/menu-extraction.ts` so it can be tested without making API calls.
 
+Bounded dish research is exposed through `src/lib/research/dish-research.ts` and instantiated with the server-only Tavily credential in `src/lib/server/tavily-research.ts`. Provider errors degrade to an unavailable result rather than aborting analysis.
+
 ## Locked prototype scope
 
 - English, responsive group-only web experience

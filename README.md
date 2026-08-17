@@ -30,17 +30,36 @@ The active OpenSpec change is authoritative if older exploratory context conflic
 
 ## OpenSpec collaboration
 
-OpenSpec is the shared agreement layer for humans and coding agents.
+OpenSpec is the mandatory shared agreement layer for humans and coding agents. **Every repository update must be covered by an active OpenSpec change before files are edited**, including code, documentation, configuration, dependencies, generated files, formatting, and urgent fixes.
+
+### Required workflow
+
+1. **Before editing:** run `openspec list --json`, identify the governing change, and read its artifacts. If no change covers the work, create one first.
+2. **Before implementing:** ensure every intended edit maps to a checkbox task in that change.
+3. **During work:** update proposal, requirements, design, risks, and tasks whenever decisions or scope change. Do not leave decisions only in chat.
+4. **After each task:** verify its outcome, then mark its checkbox complete.
+5. **Before PR:** run strict validation and include the change path plus task status in the PR body.
+6. **After acceptance:** archive the completed change and verify its specs are synchronized.
 
 ```bash
-openspec list
+openspec list --json
 openspec status --change build-menukita-group-demo
 openspec validate build-menukita-group-demo --strict
 ```
 
-In a Codex chat, use the generated OpenSpec skills to explore requirements, propose a separate change, apply approved tasks, and archive completed changes. Update the active artifacts when a product or technical decision changes; do not leave important decisions only in chat.
+Example traceability in a pull request:
+
+```text
+OpenSpec change: openspec/changes/build-menukita-group-demo/
+Tasks completed: 1.1, 1.2, 1.3
+Validation: openspec validate build-menukita-group-demo --strict
+```
+
+In a Codex chat, use the generated OpenSpec skills to explore requirements, propose a change, apply approved tasks, and archive completed changes.
 
 For parallel work, use separate branches and OpenSpec changes when scopes can be isolated. Coordinate edits to shared schemas, routing, and dependencies before implementation.
+
+The full normative policy is defined by [`AGENTS.md`](./AGENTS.md) and the [`openspec-change-governance` specification](./openspec/changes/enforce-openspec-change-tracking/specs/openspec-change-governance/spec.md).
 
 ## Current collaboration inputs
 

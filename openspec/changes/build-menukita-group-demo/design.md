@@ -46,6 +46,10 @@ Implement explicit server-side orchestration rather than an autonomous loop:
 
 Expose only these high-level stages to the client. Do not expose chain-of-thought. Prefer a streaming event response or discrete stage endpoint contract only if it can report real completed work; otherwise show the current server operation without fabricated fine-grained progress.
 
+### Direct orchestration without an agent framework
+
+Implement the bounded agent as explicit TypeScript functions using the OpenAI SDK, Tavily SDK, and Zod rather than LangChain or another agent framework. The model retains agentic decisions—whether research is required, which dishes to research, what to query, whether evidence is relevant, and when to stop—while application code enforces budgets and deterministic safety rules. LangChain was rejected because this prototype has one external tool and a short, controlled chain; its abstractions would increase dependency and debugging cost without adding useful capability.
+
 ### Bounded Tavily adapter
 
 Wrap Tavily behind a `DishResearchProvider` interface so the agent calls a domain function rather than vendor code. Use `search_depth: basic`, `max_results: 3`, `include_answer: false`, and no raw content. Research at most three dishes and at most twice per dish, with a short timeout. Prioritize an official restaurant query, then one general dish query. Failed research returns an unresolved evidence result instead of failing the scan.

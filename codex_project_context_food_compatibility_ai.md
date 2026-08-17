@@ -1,6 +1,22 @@
-# Codex Project Context: AI Food Compatibility Assistant
+# MenuKita Project Context: AI Food Compatibility Assistant
 
 Use this file as the source of truth when discussing, planning, and developing the hackathon prototype. Do not assume every idea below must be implemented. Protect the one-day scope and prioritize a reliable end-to-end demo.
+
+## Locked MVP decisions
+
+These decisions supersede earlier exploratory alternatives elsewhere in this document:
+
+- The product name is **MenuKita**.
+- The demo is group-only; personal mode is a future extension.
+- The current user completes an onboarding questionnaire stored in the browser.
+- The user joins one existing demo group whose other profiles are hardcoded in source.
+- Authentication, databases, invitations, sharing, and persistent group management are excluded.
+- The interface language is English.
+- `gpt-4o-mini` reads the menu image and returns structured data; no separate OCR service is used.
+- Tavily supplies bounded web research when material dish information is missing.
+- The agent uses explicit TypeScript orchestration with the OpenAI and Tavily SDKs, Zod validation, and deterministic restriction rules; LangChain is not used.
+- The active OpenSpec change at `openspec/changes/build-menukita-group-demo/` is authoritative for implementation behavior, design, and tasks.
+- Final preset group details, brand system, and demo images will be supplied before their corresponding implementation tasks.
 
 ## 1. Project status
 
@@ -11,16 +27,9 @@ Use this file as the source of truth when discussing, planning, and developing t
 - AI should have a meaningful role, but the team should avoid adding unnecessary technical complexity just to show off technology.
 - The final application must be deployable as a web app.
 
-## 2. Working title
+## 2. Product name
 
-The final name has not been selected yet. Current options include:
-
-- DishMatch
-- PlatePal
-- TasteSync
-- MenuMatch
-
-Use **DishMatch** as the temporary internal name unless Wildan chooses another name.
+The final product name is **MenuKita**.
 
 Working tagline:
 
@@ -102,7 +111,7 @@ Potential users:
 
 ### Product strategy
 
-Personal mode is easier to explain and should be the core MVP. Group mode is the differentiating feature and can be added after the personal flow works reliably.
+Group mode is the hackathon MVP because multi-person matching is the clearest differentiator. Personal mode remains a future extension. The prototype avoids group infrastructure by combining the questionnaire profile of the current user with preset members from one existing demo group.
 
 ## 6. Core solution
 
@@ -262,7 +271,8 @@ generate_restaurant_questions(uncertainties, target_language)
 ### Must have
 
 - Responsive web interface
-- Personal food profile form
+- Current-user onboarding questionnaire
+- Existing demo-group selection and group overview
 - Menu image upload
 - Vision model extraction into structured JSON
 - Explanation of each detected dish
@@ -271,14 +281,11 @@ generate_restaurant_questions(uncertainties, target_language)
 - Clear uncertainty labels
 - At least one recommended dish
 - Generated restaurant questions when necessary
+- Group compatibility matrix and group/per-member recommendations
 - A polished demo using a real menu screenshot
 
 ### Should have if time allows
 
-- Group profiles
-- Group compatibility matrix
-- Recommendation for each person
-- A dish or combination that works for the whole group
 - Translation of restaurant questions into the detected menu language
 - Share or copy result
 - Local scan history
@@ -328,23 +335,29 @@ Menu image
 
 Keep the main journey short.
 
-### Screen 1: Food profile
+### Screen 1: Current-user questionnaire
 
-- Choose personal or group mode
 - Add restrictions
 - Add allergies
 - Set spice tolerance
 - Add likes and dislikes
 - Optional preferred language
 
-### Screen 2: Scan the menu
+### Screen 2: Select and enter demo group
+
+- Show the existing group card
+- Join without authentication
+- Review the current user and preset members
+- Continue to menu scan
+
+### Screen 3: Scan the menu
 
 - Upload, drag and drop, or use camera
 - Show image preview
 - Allow optional restaurant name and country
 - Analyze button
 
-### Screen 3: Analysis
+### Screen 4: Analysis
 
 - Detected menu language
 - Recommended dishes first
@@ -352,14 +365,14 @@ Keep the main journey short.
 - Expandable evidence: listed, commonly used, needs confirmation
 - Clear conflict and uncertainty explanations
 
-### Screen 4: Ask the restaurant
+### Screen 5: Ask the restaurant
 
 - Generated confirmation questions
 - Original user language
 - Local restaurant language
 - Copy button
 
-### Optional group view
+### Group compatibility view
 
 A matrix showing how each dish matches each person:
 
@@ -415,7 +428,7 @@ Mitigation: cap searches, cache the demo result, and prepare a fallback demo inp
 
 ### Too many features for one day
 
-Mitigation: finish personal mode first. Add group mode only after the core flow is stable.
+Mitigation: keep group profiles preset, store only the current questionnaire profile in the browser, and exclude authentication, databases, invitations, sharing, and group administration.
 
 ### Generic product positioning
 
@@ -443,22 +456,18 @@ When this context is first loaded:
 
 1. Do not immediately build the entire application.
 2. Inspect the current repository and existing files first.
-3. Ask Wildan which working title and AI provider should be used if these are not already determined.
+3. Treat MenuKita, GPT-4o mini, Tavily, and direct TypeScript orchestration as locked unless Wildan explicitly changes them.
 4. Propose a tightly scoped implementation plan for a one-day prototype.
-5. Prioritize the end-to-end personal flow before group mode.
+5. Prioritize the end-to-end group demo flow defined by the active OpenSpec change.
 6. Use structured model outputs and deterministic rules where possible.
 7. Keep all safety and uncertainty wording visible in the interface.
 8. Avoid overengineering and protect the demo timeline.
 9. After the plan is approved, implement, test with at least one real menu image, deploy if authorized, and document the demo flow.
 
-## 19. Immediate decisions still needed
+## 19. Remaining project inputs
 
-- Final project name
-- AI provider and model
-- Search or grounding provider
-- Whether group mode is part of the first MVP or a stretch goal
-- Exact food-profile fields
-- Whether authentication is omitted entirely
-- Visual direction and brand style
-- Which real menu image and profiles will be used for the final demo
+Core concept and architecture decisions are locked in OpenSpec. The remaining inputs are:
 
+- Final preset group-member details
+- Final visual direction and brand system from the design collaborator
+- Primary and backup menu images for the final demo

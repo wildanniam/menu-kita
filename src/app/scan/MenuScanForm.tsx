@@ -1,6 +1,6 @@
 "use client";
 
-import { CameraIcon, ImageUpIcon, XIcon } from "lucide-react";
+import { CameraIcon, CheckIcon, ImageUpIcon, XIcon } from "lucide-react";
 import Link from "next/link";
 import { useEffect, useRef, useState } from "react";
 
@@ -137,7 +137,7 @@ export function MenuScanForm() {
   const [image, setImage] = useState<SelectedImage | null>(null);
   const [cameraOpen, setCameraOpen] = useState(false);
   const [error, setError] = useState<string | null>(null);
-  const [scanRequested, setScanRequested] = useState(false);
+  const [scanned, setScanned] = useState(false);
   const fileInputRef = useRef<HTMLInputElement>(null);
 
   useEffect(() => {
@@ -159,7 +159,7 @@ export function MenuScanForm() {
       URL.revokeObjectURL(image.previewUrl);
     }
     setError(null);
-    setScanRequested(false);
+    setScanned(false);
     setCameraOpen(false);
     setImage({ file, previewUrl: URL.createObjectURL(file) });
   }
@@ -178,7 +178,7 @@ export function MenuScanForm() {
     }
     setImage(null);
     setError(null);
-    setScanRequested(false);
+    setScanned(false);
   }
 
   if (!profile) {
@@ -254,35 +254,49 @@ export function MenuScanForm() {
               alt="Selected menu"
               className="max-h-96 w-full object-contain"
             />
-            <Button
-              type="button"
-              size="icon-sm"
-              variant="secondary"
-              aria-label="Remove photo"
-              onClick={handleRemove}
-              className="absolute top-2 right-2"
-            >
-              <XIcon aria-hidden="true" />
-            </Button>
+            {scanned && (
+              <div
+                style={{ backgroundColor: PALETTE.oliveLeaf }}
+                className="absolute top-2 right-2 flex items-center gap-1 rounded-full px-2.5 py-1 text-xs font-semibold text-white"
+              >
+                <CheckIcon aria-hidden="true" className="size-3.5" />
+                Scanned
+              </div>
+            )}
           </div>
 
-          <div className="flex flex-wrap gap-3">
-            <Button
-              type="button"
-              onClick={() => setScanRequested(true)}
-              style={{ backgroundColor: PALETTE.rustySpice }}
-              className="border-transparent text-white hover:opacity-90"
-            >
-              Scan menu
-            </Button>
-            <Button type="button" variant="outline" onClick={handleRemove}>
-              Retry with another photo
-            </Button>
+          <div className="flex items-center justify-center gap-6">
+            <div className="flex flex-col items-center gap-1.5">
+              <Button
+                type="button"
+                size="icon-lg"
+                aria-label="Retake photo"
+                onClick={handleRemove}
+                className="rounded-full border-transparent bg-neutral-700 text-white hover:opacity-90"
+              >
+                <XIcon aria-hidden="true" />
+              </Button>
+              <span className="text-xs text-neutral-600">Retake photo</span>
+            </div>
+
+            <div className="flex flex-col items-center gap-1.5">
+              <Button
+                type="button"
+                size="icon-lg"
+                aria-label="Scan photo"
+                onClick={() => setScanned(true)}
+                style={{ backgroundColor: PALETTE.oliveLeaf }}
+                className="rounded-full border-transparent text-white hover:opacity-90"
+              >
+                <CheckIcon aria-hidden="true" />
+              </Button>
+              <span className="text-xs text-neutral-600">Scan photo</span>
+            </div>
           </div>
 
-          {scanRequested && (
+          {scanned && (
             <p role="status" style={{ color: PALETTE.oliveLeaf }} className="text-sm font-medium">
-              Photo ready. Menu scanning isn&apos;t built yet.
+              Photo scanned. Menu reading isn&apos;t built yet.
             </p>
           )}
         </div>

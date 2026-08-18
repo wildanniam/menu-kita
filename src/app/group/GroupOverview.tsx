@@ -14,6 +14,7 @@ import { WheatIcon } from "@/components/icons/wheat-icon";
 import { buildDemoGroup } from "@/lib/data/demo-group";
 import type { FoodProfile, Group, SpiceTolerance } from "@/lib/schemas";
 import { useCurrentUserProfile } from "@/lib/storage/profile-storage";
+import { RecentScans } from "./RecentScans";
 
 const PALETTE = {
   rustySpice: "#AD390B",
@@ -116,6 +117,8 @@ function GroupSummary({ group }: { group: Group }) {
       >
         Start menu scan
       </Button>
+
+      <RecentScans />
     </div>
   );
 }

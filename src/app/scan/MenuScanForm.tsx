@@ -5,7 +5,9 @@ import { useRouter } from "next/navigation";
 import { useEffect, useRef, useState } from "react";
 
 import { AnimatedButton, AnimatedLinkButton } from "@/components/ui/animated-button";
+import { Input } from "@/components/ui/input";
 import { useCurrentUserProfile } from "@/lib/storage/profile-storage";
+import { setPendingScan } from "@/lib/storage/scan-history-storage";
 
 const PALETTE = {
   rustySpice: "#AD390B",
@@ -133,6 +135,7 @@ export function MenuScanForm() {
   const [image, setImage] = useState<SelectedImage | null>(null);
   const [cameraOpen, setCameraOpen] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const [restaurantName, setRestaurantName] = useState("");
   const fileInputRef = useRef<HTMLInputElement>(null);
 
   useEffect(() => {
@@ -172,6 +175,11 @@ export function MenuScanForm() {
     }
     setImage(null);
     setError(null);
+  }
+
+  function handleScan() {
+    setPendingScan(restaurantName);
+    router.push("/analyzing");
   }
 
   if (!profile) {
@@ -238,13 +246,19 @@ export function MenuScanForm() {
             />
           </div>
 
+          <Input
+            value={restaurantName}
+            onChange={(event) => setRestaurantName(event.target.value)}
+            placeholder="Restaurant name (optional)"
+          />
+
           <div className="flex flex-wrap items-center justify-center gap-3">
             <AnimatedButton type="button" onClick={handleRemove}>
               <XIcon aria-hidden="true" />
               Retake photo
             </AnimatedButton>
 
-            <AnimatedButton type="button" onClick={() => router.push("/analyzing")}>
+            <AnimatedButton type="button" onClick={handleScan}>
               <CheckIcon aria-hidden="true" />
               Scan photo
             </AnimatedButton>

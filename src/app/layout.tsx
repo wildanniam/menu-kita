@@ -20,9 +20,9 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
         className={appFont.className}
         style={{
           backgroundImage: "url(/food-pattern-joined.jpg)",
-          backgroundRepeat: "no-repeat",
-          backgroundSize: "cover",
-          backgroundPosition: "center top",
+          backgroundRepeat: "repeat-y",
+          backgroundSize: "100% auto",
+          backgroundPosition: "top center",
         }}
       >
         {children}

@@ -2,7 +2,7 @@
 
 import { ChevronDownIcon, ClipboardIcon } from "lucide-react";
 import Link from "next/link";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 
 import { Button } from "@/components/ui/button";
 import { ToggleGroup, ToggleGroupItem } from "@/components/ui/toggle-group";
@@ -13,6 +13,10 @@ import {
 import { buildDemoGroup } from "@/lib/data/demo-group";
 import type { Dish, DietaryStatus, FoodProfile } from "@/lib/schemas";
 import { useCurrentUserProfile } from "@/lib/storage/profile-storage";
+import {
+  addScanHistoryEntry,
+  consumePendingScan,
+} from "@/lib/storage/scan-history-storage";
 import { dummyMenuDishes } from "./dummy-menu";
 
 const PALETTE = {
@@ -139,8 +143,50 @@ function DishRow({
 export function ResultsView() {
   const profile = useCurrentUserProfile();
   const [activeTab, setActiveTab] = useState<string>(ALL_TAB_VALUE);
+  const group = profile ? buildDemoGroup(profile) : null;
 
-  if (!profile) {
+  const evaluationByMember: Record<string, Record<string, RestrictionEvaluation>> = {};
+  for (const member of group?.members ?? []) {
+    evaluationByMember[member.id] = {};
+    for (const dish of dummyMenuDishes) {
+      evaluationByMember[member.id][dish.id] = evaluateHardRestrictions(
+        member,
+        dish,
+      );
+    }
+  }
+
+  const everyoneCanHave = dummyMenuDishes.filter((dish) =>
+    (group?.members ?? []).every(
+      (member) => evaluationByMember[member.id][dish.id].status === "compatible",
+    ),
+  );
+
+  const hasConflict = dummyMenuDishes.filter((dish) =>
+    (group?.members ?? []).some(
+      (member) => evaluationByMember[member.id][dish.id].status === "conflict",
+    ),
+  );
+
+  useEffect(() => {
+    if (!group) {
+      return;
+    }
+    const pending = consumePendingScan();
+    if (!pending) {
+      return;
+    }
+    addScanHistoryEntry({
+      restaurantName: pending.restaurantName,
+      scannedAt: pending.scannedAt,
+      dishCount: dummyMenuDishes.length,
+      safeCount: everyoneCanHave.length,
+      conflictCount: hasConflict.length,
+    });
+    // eslint-disable-next-line react-hooks/exhaustive-deps -- run once per landing on results, keyed by the pending-scan marker
+  }, [group]);
+
+  if (!profile || !group) {
     return (
       <div
         className="flex flex-col items-start gap-4 rounded-xl border-2 border-dashed bg-white p-6"
@@ -159,25 +205,6 @@ export function ResultsView() {
       </div>
     );
   }
-
-  const group = buildDemoGroup(profile);
-
-  const evaluationByMember: Record<string, Record<string, RestrictionEvaluation>> = {};
-  for (const member of group.members) {
-    evaluationByMember[member.id] = {};
-    for (const dish of dummyMenuDishes) {
-      evaluationByMember[member.id][dish.id] = evaluateHardRestrictions(
-        member,
-        dish,
-      );
-    }
-  }
-
-  const everyoneCanHave = dummyMenuDishes.filter((dish) =>
-    group.members.every(
-      (member) => evaluationByMember[member.id][dish.id].status === "compatible",
-    ),
-  );
 
   const activeMember: FoodProfile | undefined = group.members.find(
     (member) => member.id === activeTab,

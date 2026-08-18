@@ -1,7 +1,7 @@
 import { FlowNav } from "@/components/FlowNav";
 import { PageHeaderCard } from "@/components/PageHeaderCard";
 import { ResetJourneyButton } from "@/components/ResetJourneyButton";
-import { pacifico } from "@/lib/fonts";
+import { headingFont } from "@/lib/fonts";
 import { ResultsView } from "./ResultsView";
 
 export default function ResultsPage() {
@@ -18,7 +18,7 @@ export default function ResultsPage() {
         >
           <h1
             style={{ color: "#7C2D12" }}
-            className={`${pacifico.className} text-3xl sm:text-4xl`}
+            className={`${headingFont.className} text-4xl sm:text-5xl`}
           >
             Who Can Have What
           </h1>

@@ -1,5 +1,5 @@
 import type { Metadata } from "next";
-import { Baloo_2, Geist } from "next/font/google";
+import { Geist, Pacifico } from "next/font/google";
 import Image from "next/image";
 
 import "./globals.css";
@@ -7,7 +7,7 @@ import { cn } from "@/lib/utils";
 
 const geist = Geist({subsets:['latin'],variable:'--font-sans'});
 
-const appFont = Baloo_2({ subsets: ["latin"], weight: ["400", "500", "600", "700", "800"] });
+const appFont = Pacifico({ subsets: ["latin"], weight: ["400"] });
 
 export const metadata: Metadata = {
   title: "MenuKita",

@@ -2,6 +2,7 @@
 
 import { CameraIcon, CheckIcon, ImageUpIcon, XIcon } from "lucide-react";
 import Link from "next/link";
+import { useRouter } from "next/navigation";
 import { useEffect, useRef, useState } from "react";
 
 import { Button } from "@/components/ui/button";
@@ -133,11 +134,11 @@ function CameraCapture({
 }
 
 export function MenuScanForm() {
+  const router = useRouter();
   const profile = useCurrentUserProfile();
   const [image, setImage] = useState<SelectedImage | null>(null);
   const [cameraOpen, setCameraOpen] = useState(false);
   const [error, setError] = useState<string | null>(null);
-  const [scanned, setScanned] = useState(false);
   const fileInputRef = useRef<HTMLInputElement>(null);
 
   useEffect(() => {
@@ -159,7 +160,6 @@ export function MenuScanForm() {
       URL.revokeObjectURL(image.previewUrl);
     }
     setError(null);
-    setScanned(false);
     setCameraOpen(false);
     setImage({ file, previewUrl: URL.createObjectURL(file) });
   }
@@ -178,7 +178,6 @@ export function MenuScanForm() {
     }
     setImage(null);
     setError(null);
-    setScanned(false);
   }
 
   if (!profile) {
@@ -254,15 +253,6 @@ export function MenuScanForm() {
               alt="Selected menu"
               className="max-h-96 w-full object-contain"
             />
-            {scanned && (
-              <div
-                style={{ backgroundColor: PALETTE.oliveLeaf }}
-                className="absolute top-2 right-2 flex items-center gap-1 rounded-full px-2.5 py-1 text-xs font-semibold text-white"
-              >
-                <CheckIcon aria-hidden="true" className="size-3.5" />
-                Scanned
-              </div>
-            )}
           </div>
 
           <div className="flex items-center justify-center gap-6">
@@ -284,7 +274,7 @@ export function MenuScanForm() {
                 type="button"
                 size="icon-lg"
                 aria-label="Scan photo"
-                onClick={() => setScanned(true)}
+                onClick={() => router.push("/results")}
                 style={{ backgroundColor: PALETTE.oliveLeaf }}
                 className="rounded-full border-transparent text-white hover:opacity-90"
               >
@@ -293,12 +283,6 @@ export function MenuScanForm() {
               <span className="text-xs text-neutral-600">Scan photo</span>
             </div>
           </div>
-
-          {scanned && (
-            <p role="status" style={{ color: PALETTE.oliveLeaf }} className="text-sm font-medium">
-              Photo scanned. Menu reading isn&apos;t built yet.
-            </p>
-          )}
         </div>
       )}
     </div>

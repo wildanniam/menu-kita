@@ -32,7 +32,7 @@ npm run build
 
 Shared Zod schemas and inferred TypeScript types live in `src/lib/schemas/`. UI work should use these contracts or typed fixtures derived from them.
 
-The replaceable five-person group lives in `src/lib/data/demo-group.ts`. Contract-valid menu, compatibility, recommendation, question, and progress fixtures live in `src/lib/fixtures/demo-analysis.ts`, so UI work can proceed before the live analysis route is connected.
+The replaceable five-person group lives in `src/lib/data/demo-group.ts`. Contract-valid menu, compatibility, recommendation, question, and progress fixtures live in `src/lib/fixtures/demo-analysis.ts`, so UI work can proceed independently of the live analysis route.
 
 The server-only GPT-4o mini adapter lives in `src/lib/server/openai-menu-extraction.ts`. Its validation and single repair-attempt workflow is isolated in `src/lib/ai/menu-extraction.ts` so it can be tested without making API calls.
 
@@ -51,6 +51,8 @@ The live matrix uses one batch preference request for all member/dish pairs. Mis
 Group and per-member ranking lives in `src/lib/compatibility/recommendations.ts`. It rejects incomplete matrices, excludes conflicts from member fallbacks, and ranks group candidates by conflicts, confirmation burden, evidence sufficiency, then preference fit.
 
 Material restaurant questions are generated through `src/lib/questions/restaurant-questions.ts`. Non-English menus receive English and detected-language text, English menus avoid duplicate translations, and invalid model references fall back to bounded questions derived from known uncertainties.
+
+The complete server workflow is coordinated in `src/lib/analysis/analyze-menu.ts` and exposed as a newline-delimited JSON stream at `POST /api/analyze`. It emits only real high-level stages, runs independent dish research concurrently, preserves unresolved evidence when Tavily is unavailable, and validates the final result before streaming it to the client.
 
 ## Locked prototype scope
 

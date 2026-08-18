@@ -17,7 +17,14 @@ export const metadata: Metadata = {
 export default function RootLayout({ children }: LayoutProps<"/">) {
   return (
     <html lang="en" className={cn("font-sans", geist.variable)}>
-      <body className={appFont.className}>
+      <body
+        className={appFont.className}
+        style={{
+          backgroundImage: "url(/food-pattern.jpg)",
+          backgroundRepeat: "repeat",
+          backgroundSize: "260px 260px",
+        }}
+      >
         <Image
           src="/menukita-logo.jpg"
           alt="MenuKita"

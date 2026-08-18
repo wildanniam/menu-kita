@@ -1,4 +1,5 @@
 import { FlowNav } from "@/components/FlowNav";
+import { PageHeaderCard } from "@/components/PageHeaderCard";
 import { ResetJourneyButton } from "@/components/ResetJourneyButton";
 import { GroupOverview } from "./GroupOverview";
 
@@ -6,12 +7,9 @@ const DECORATIVE_DOTS = ["#AD390B", "#385610", "#D97706", "#7C2D12"];
 
 export default function GroupPage() {
   return (
-    <main
-      style={{ backgroundColor: "#F5E6C8" }}
-      className="flex min-h-screen w-full justify-center px-4 py-10 sm:px-6 sm:py-16"
-    >
+    <main className="flex min-h-screen w-full justify-center px-4 py-10 sm:px-6 sm:py-16">
       <div className="flex w-full max-w-2xl flex-col gap-6 sm:gap-8">
-        <div className="flex flex-col gap-3">
+        <PageHeaderCard>
           <div className="flex flex-wrap items-center justify-between gap-2">
             <FlowNav current="/group" />
             <ResetJourneyButton />
@@ -31,7 +29,7 @@ export default function GroupPage() {
           >
             Your Group
           </h1>
-        </div>
+        </PageHeaderCard>
         <GroupOverview />
       </div>
     </main>

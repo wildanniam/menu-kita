@@ -68,7 +68,7 @@ export function AnalyzingView() {
 
   return (
     <div className="flex flex-col gap-4">
-      <p className="text-xs text-neutral-500">
+      <p className="w-fit rounded-lg bg-white/90 px-3 py-1.5 text-xs text-neutral-500">
         Preview using a sample analysis sequence &mdash; live streaming
         isn&apos;t connected yet.
       </p>

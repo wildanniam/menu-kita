@@ -197,7 +197,7 @@ export function ResultsView() {
 
   return (
     <div className="flex flex-col gap-4">
-      <p className="text-xs text-neutral-500">
+      <p className="w-fit rounded-lg bg-white/90 px-3 py-1.5 text-xs text-neutral-500">
         Using a sample menu for this demo &mdash; live photo scanning isn&apos;t
         connected yet. Results below use the real compatibility rules.
       </p>
@@ -297,7 +297,7 @@ export function ResultsView() {
         )
       )}
 
-      <p className="border-t border-neutral-200 pt-4 text-xs text-neutral-500">
+      <p className="rounded-lg bg-white/90 px-3 py-2 text-xs text-neutral-500">
         This app can&apos;t guarantee allergy or religious dietary safety.
         Always confirm directly with restaurant staff, especially for severe
         allergies.

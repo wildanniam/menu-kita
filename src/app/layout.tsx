@@ -26,12 +26,12 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
         }}
       >
         <Image
-          src="/menukita-logo.jpg"
+          src="/menukita-logo-transparent.png"
           alt="MenuKita"
-          width={160}
-          height={120}
+          width={210}
+          height={104}
           priority
-          className="fixed top-3 left-3 z-50 h-10 w-auto rounded-lg shadow-md sm:h-12"
+          className="fixed top-3 left-3 z-50 h-10 w-auto sm:h-12"
         />
         {children}
       </body>

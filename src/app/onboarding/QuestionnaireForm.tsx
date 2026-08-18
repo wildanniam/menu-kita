@@ -1,6 +1,7 @@
 "use client";
 
 import { XIcon } from "lucide-react";
+import { useRouter } from "next/navigation";
 import { useId, useRef, useState } from "react";
 import type { ReactNode } from "react";
 
@@ -224,6 +225,7 @@ function QuestionnaireFormInner({
 }: {
   savedProfile: FoodProfile | null;
 }) {
+  const router = useRouter();
   const [name, setName] = useState(savedProfile?.name ?? "");
   const [spiceTolerance, setSpiceTolerance] = useState<SpiceTolerance | "">(
     savedProfile?.spiceTolerance ?? "",
@@ -235,7 +237,6 @@ function QuestionnaireFormInner({
     dislikes: savedProfile?.dislikes ?? [],
   });
   const [errors, setErrors] = useState<FormErrors>({});
-  const [justSaved, setJustSaved] = useState(false);
 
   const mildIconRef = useRef<LeafIconHandle>(null);
   const mediumIconRef = useRef<SoupIconHandle>(null);
@@ -272,7 +273,6 @@ function QuestionnaireFormInner({
 
     const nextErrors = validate();
     setErrors(nextErrors);
-    setJustSaved(false);
     if (Object.keys(nextErrors).length > 0) {
       return;
     }
@@ -289,7 +289,7 @@ function QuestionnaireFormInner({
     });
 
     saveCurrentUserProfile(profile);
-    setJustSaved(true);
+    router.push("/group");
   }
 
   return (
@@ -391,12 +391,6 @@ function QuestionnaireFormInner({
       >
         Continue
       </Button>
-
-      {justSaved && (
-        <p role="status" style={{ color: PALETTE.oliveLeaf }} className="text-sm font-medium">
-          Profile saved. Group selection isn&apos;t built yet.
-        </p>
-      )}
     </form>
   );
 }

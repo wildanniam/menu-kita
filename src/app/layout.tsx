@@ -1,6 +1,5 @@
 import type { Metadata } from "next";
 import { Geist, Open_Sans } from "next/font/google";
-import Image from "next/image";
 
 import "./globals.css";
 import { cn } from "@/lib/utils";
@@ -21,18 +20,12 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
         className={appFont.className}
         style={{
           backgroundImage: "url(/food-pattern.jpg)",
-          backgroundRepeat: "repeat",
-          backgroundSize: "260px 260px",
+          backgroundRepeat: "no-repeat",
+          backgroundSize: "cover",
+          backgroundPosition: "center",
+          backgroundAttachment: "fixed",
         }}
       >
-        <Image
-          src="/menukita-logo-transparent.png"
-          alt="MenuKita"
-          width={210}
-          height={104}
-          priority
-          className="fixed top-3 left-3 z-50 h-10 w-auto sm:h-12"
-        />
         {children}
       </body>
     </html>

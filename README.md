@@ -40,6 +40,8 @@ Bounded dish research is exposed through `src/lib/research/dish-research.ts` and
 
 Deterministic hard-restriction evaluation lives in `src/lib/compatibility/restrictions.ts`. It normalizes a bounded English/Indonesian ingredient vocabulary, preserves evidence IDs, and applies conflict/confirmation/information precedence independently from preference scoring.
 
+The research planner in `src/lib/research/research-planner.ts` offers GPT-4o mini only dishes with material hard-restriction uncertainty, then enforces a maximum of three researched dishes and two searches per dish in application code.
+
 ## Locked prototype scope
 
 - English, responsive group-only web experience

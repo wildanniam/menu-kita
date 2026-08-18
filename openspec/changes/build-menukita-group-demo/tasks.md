@@ -30,7 +30,7 @@
 ## 4. Bounded agentic research
 
 - [x] 4.1 **[Wildan/Core]** Implement the Tavily provider adapter with basic search, source normalization, timeout, and request limits
-- [ ] 4.2 **[Wildan/Core]** Implement the research planner that selects only material unknowns and enforces per-scan and per-dish limits
+- [x] 4.2 **[Wildan/Core]** Implement the research planner that selects only material unknowns and enforces per-scan and per-dish limits
 - [ ] 4.3 **[Wildan/Core]** Implement researched-claim normalization with menu-listed, common-usage, and unresolved provenance
 - [ ] 4.4 **[Wildan/Core]** Connect extraction, planning, research, and synthesis into a streaming `POST /api/analyze` workflow with truthful stage events and graceful degradation
 

@@ -90,8 +90,8 @@ Keep the approved group values in one typed data module so replacing restriction
 - Next.js, TypeScript, Tailwind CSS, linting, tests, and production build are operational.
 - OpenAI and Tavily credentials are present locally and authentication smoke checks pass.
 - Server environment validation, shared Zod contracts, typed fixtures, and preset group data are implemented.
-- Structured GPT-4o mini extraction, the bounded Tavily provider, and deterministic hard-restriction evaluation are implemented and unit-tested.
-- No onboarding, group flow, upload flow, research planner, preference/ranking engine, live analysis route, results UI, or deployment exists yet.
+- Structured GPT-4o mini extraction, the bounded Tavily provider and research planner, and deterministic hard-restriction evaluation are implemented and unit-tested.
+- No onboarding, group flow, upload flow, research evidence synthesis, preference/ranking engine, live analysis route, results UI, or deployment exists yet.
 
 ### Delivery graph
 

@@ -11,6 +11,7 @@ import {
 } from "react";
 import type { ReactNode } from "react";
 
+import { AnimatedButton } from "@/components/ui/animated-button";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Field, FieldError, FieldLabel } from "@/components/ui/field";
@@ -178,16 +179,9 @@ const TagListInput = forwardRef<
           }}
         />
         <InputGroupAddon align="inline-end">
-          <Button
-            type="button"
-            size="sm"
-            variant="outline"
-            onClick={commitDraft}
-            style={{ "--pill-accent": PALETTE.rustySpice } as React.CSSProperties}
-            className="border-[var(--pill-accent)] text-[var(--pill-accent)] hover:bg-[var(--pill-accent)] hover:text-white"
-          >
+          <AnimatedButton type="button" size="sm" onClick={commitDraft}>
             Add
-          </Button>
+          </AnimatedButton>
         </InputGroupAddon>
       </InputGroup>
 
@@ -410,13 +404,9 @@ function QuestionnaireFormInner({
         onChange={(values) => updateTagList("dislikes", values)}
       />
 
-      <Button
-        type="submit"
-        style={{ backgroundColor: PALETTE.rustySpice }}
-        className="w-full border-transparent text-white hover:opacity-90 sm:w-auto"
-      >
+      <AnimatedButton type="submit" className="w-full sm:w-auto">
         Continue
-      </Button>
+      </AnimatedButton>
     </form>
   );
 }

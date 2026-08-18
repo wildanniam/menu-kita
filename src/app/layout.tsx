@@ -1,5 +1,5 @@
 import type { Metadata } from "next";
-import { Geist, Pacifico } from "next/font/google";
+import { Geist, Open_Sans } from "next/font/google";
 import Image from "next/image";
 
 import "./globals.css";
@@ -7,7 +7,7 @@ import { cn } from "@/lib/utils";
 
 const geist = Geist({subsets:['latin'],variable:'--font-sans'});
 
-const appFont = Pacifico({ subsets: ["latin"], weight: ["400"] });
+const appFont = Open_Sans({ subsets: ["latin"], weight: ["400", "500", "600", "700"] });
 
 export const metadata: Metadata = {
   title: "MenuKita",

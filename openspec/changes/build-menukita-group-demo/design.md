@@ -67,6 +67,8 @@ Normalize common ingredient aliases before applying deterministic member rules. 
 
 Preference scoring is calculated separately and cannot change that status. Group ranking first minimizes conflicts and confirmation burden, then considers aggregated preference fit.
 
+Evaluate preference fit for the complete member/dish matrix in one structured model request rather than one request per cell. Application code validates profile IDs, dish IDs, and explanation evidence references, then fills any missing or invalid cell with a deterministic preference estimate. Hard-restriction status is always computed separately after preference output is received.
+
 The deterministic baseline recognizes the demo group's vegan, no-beef, seafood-allergy, lactose-intolerance, and halal requirements plus common no-pork, vegetarian, shellfish, egg, gluten, nut, sesame, and soy inputs. Keep the alias vocabulary deliberately bounded to common English and Indonesian menu terms. Plant milks such as coconut milk must not be treated as dairy. An unrecognized hard requirement must produce `needs_confirmation` rather than silently passing as compatible. For halal profiles, explicitly listed pork or alcohol is a conflict, while unconfirmed meat sourcing or preparation requires confirmation.
 
 ### Security and data handling
@@ -90,7 +92,7 @@ Keep the approved group values in one typed data module so replacing restriction
 - Next.js, TypeScript, Tailwind CSS, linting, tests, and production build are operational.
 - OpenAI and Tavily credentials are present locally and authentication smoke checks pass.
 - Server environment validation, shared Zod contracts, typed fixtures, and preset group data are implemented.
-- Structured GPT-4o mini extraction, the bounded Tavily provider and research planner, and deterministic hard-restriction evaluation are implemented and unit-tested.
+- Structured GPT-4o mini extraction, the bounded Tavily provider and research planner, deterministic hard-restriction evaluation, batch preference evaluation, and recommendation ranking are implemented and unit-tested.
 - No onboarding, group flow, upload flow, live analysis route, results UI, or deployment exists yet.
 
 ### Delivery graph

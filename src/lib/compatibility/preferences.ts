@@ -19,6 +19,15 @@ export const preferenceModelOutputSchema = z.object({
   reasons: z.array(preferenceReasonSchema).min(1).max(5),
 });
 
+const batchPreferenceEntrySchema = preferenceModelOutputSchema.extend({
+  profileId: z.string().trim().min(1),
+  dishId: z.string().trim().min(1),
+});
+
+export const batchPreferenceModelOutputSchema = z.object({
+  evaluations: z.array(batchPreferenceEntrySchema),
+});
+
 export interface PreferenceModelInput {
   profile: {
     spiceTolerance: FoodProfile["spiceTolerance"];
@@ -38,6 +47,19 @@ export interface PreferenceModelInput {
 
 export interface PreferenceEvaluationModel {
   evaluate(input: PreferenceModelInput): Promise<unknown>;
+}
+
+export interface BatchPreferenceEvaluationModel {
+  evaluateBatch(input: {
+    profiles: Array<{
+      id: string;
+      spiceTolerance: FoodProfile["spiceTolerance"];
+      likes: string[];
+      dislikes: string[];
+    }>;
+    dishes: PreferenceModelInput["dish"][];
+    allowedBasisIdsByDish: Record<string, string[]>;
+  }): Promise<unknown>;
 }
 
 export interface PreferenceEvaluation {
@@ -177,6 +199,16 @@ export async function evaluateMemberDishCompatibility(
   const restrictions = evaluateHardRestrictions(profile, dish);
   const preferences = await evaluatePreferences(profile, dish, model);
 
+  return combineCompatibility(profile, dish, restrictions, preferences);
+}
+
+function combineCompatibility(
+  profile: FoodProfile,
+  dish: Dish,
+  restrictions: ReturnType<typeof evaluateHardRestrictions>,
+  preferences: PreferenceEvaluation,
+): MemberDishCompatibility {
+
   return memberDishCompatibilitySchema.parse({
     profileId: profile.id,
     dishId: dish.id,
@@ -190,4 +222,100 @@ export async function evaluateMemberDishCompatibility(
     ],
     uncertainties: restrictions.uncertainties,
   });
+}
+
+function preferenceFromBatchEntry(
+  entry: z.infer<typeof batchPreferenceEntrySchema>,
+  allowedBasisIds: string[],
+): PreferenceEvaluation | undefined {
+  const allowed = new Set(allowedBasisIds);
+  if (
+    entry.reasons.some(({ basisIds }) =>
+      basisIds.some((basisId) => !allowed.has(basisId)),
+    )
+  ) {
+    return undefined;
+  }
+
+  return {
+    score: entry.score,
+    summary: entry.summary,
+    reasons: entry.reasons.map(({ text }) => text),
+    evidenceIds: [
+      ...new Set(
+        entry.reasons
+          .flatMap(({ basisIds }) => basisIds)
+          .filter((basisId) => basisId !== "menu"),
+      ),
+    ],
+  };
+}
+
+export async function evaluateGroupCompatibility(
+  profiles: FoodProfile[],
+  dishes: Dish[],
+  model: BatchPreferenceEvaluationModel,
+): Promise<MemberDishCompatibility[]> {
+  const allowedBasisIdsByDish = Object.fromEntries(
+    dishes.map((dish) => [
+      dish.id,
+      ["menu", ...dish.evidence.map(({ id }) => id)],
+    ]),
+  );
+  const dishInputs: PreferenceModelInput["dish"][] = dishes.map((dish) => ({
+    id: dish.id,
+    originalName: dish.originalName,
+    translatedName: dish.translatedName,
+    menuDescription: dish.menuDescription,
+    listedIngredients: dish.listedIngredients,
+    evidence: dish.evidence.map(({ id, claim, type }) => ({ id, claim, type })),
+  }));
+  let parsedOutput: z.infer<typeof batchPreferenceModelOutputSchema> | undefined;
+
+  try {
+    const rawOutput = await model.evaluateBatch({
+      profiles: profiles.map((profile) => ({
+        id: profile.id,
+        spiceTolerance: profile.spiceTolerance,
+        likes: profile.likes,
+        dislikes: profile.dislikes,
+      })),
+      dishes: dishInputs,
+      allowedBasisIdsByDish,
+    });
+    const parsed = batchPreferenceModelOutputSchema.safeParse(rawOutput);
+    if (parsed.success) parsedOutput = parsed.data;
+  } catch {
+    parsedOutput = undefined;
+  }
+
+  const knownProfileIds = new Set(profiles.map(({ id }) => id));
+  const knownDishIds = new Set(dishes.map(({ id }) => id));
+  const batchEvaluations = new Map<string, PreferenceEvaluation>();
+
+  for (const entry of parsedOutput?.evaluations ?? []) {
+    if (
+      !knownProfileIds.has(entry.profileId) ||
+      !knownDishIds.has(entry.dishId)
+    ) {
+      continue;
+    }
+    const key = `${entry.profileId}\u0000${entry.dishId}`;
+    if (batchEvaluations.has(key)) continue;
+    const evaluation = preferenceFromBatchEntry(
+      entry,
+      allowedBasisIdsByDish[entry.dishId],
+    );
+    if (evaluation) batchEvaluations.set(key, evaluation);
+  }
+
+  return profiles.flatMap((profile) =>
+    dishes.map((dish) => {
+      const key = `${profile.id}\u0000${dish.id}`;
+      const preferences =
+        batchEvaluations.get(key) ?? fallbackPreferenceEvaluation(profile, dish);
+      const restrictions = evaluateHardRestrictions(profile, dish);
+      return combineCompatibility(profile, dish, restrictions, preferences);
+    }),
+  );
 }

@@ -4,7 +4,9 @@ import OpenAI from "openai";
 import { zodTextFormat } from "openai/helpers/zod";
 
 import {
+  batchPreferenceModelOutputSchema,
   preferenceModelOutputSchema,
+  type BatchPreferenceEvaluationModel,
   type PreferenceEvaluationModel,
   type PreferenceModelInput,
 } from "../compatibility";
@@ -46,6 +48,32 @@ export class OpenAIPreferenceEvaluationModel
         format: zodTextFormat(preferenceModelOutputSchema, "preference_fit"),
       },
       max_output_tokens: 1_200,
+    });
+
+    return JSON.parse(response.output_text) as unknown;
+  }
+}
+
+export class OpenAIBatchPreferenceEvaluationModel
+  implements BatchPreferenceEvaluationModel
+{
+  constructor(private readonly client: OpenAI = getOpenAIClient()) {}
+
+  async evaluateBatch(
+    input: Parameters<BatchPreferenceEvaluationModel["evaluateBatch"]>[0],
+  ): Promise<unknown> {
+    const response = await this.client.responses.create({
+      model: PREFERENCE_MODEL,
+      store: false,
+      instructions: `${PREFERENCE_INSTRUCTIONS}\nReturn exactly one evaluation for every supplied profile and dish pair, preserving their ids.`,
+      input: JSON.stringify(input),
+      text: {
+        format: zodTextFormat(
+          batchPreferenceModelOutputSchema,
+          "group_preference_fit",
+        ),
+      },
+      max_output_tokens: 6_000,
     });
 
     return JSON.parse(response.output_text) as unknown;

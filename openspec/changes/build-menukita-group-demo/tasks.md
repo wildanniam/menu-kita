@@ -39,7 +39,7 @@
 - [x] 5.1 **[Wildan/Core]** Implement ingredient alias normalization and deterministic hard-restriction rules with status precedence
 - [x] 5.2 **[Wildan/Core]** Implement separate preference evaluation and evidence-based member-dish explanations
 - [x] 5.3 **[Wildan/Core]** Implement group ranking, best-for-everyone selection, and per-member fallback recommendations
-- [ ] 5.4 **[Wildan/Core]** Add unit tests for conflicts, possible conflicts, sparse evidence, preference separation, and ranking edge cases
+- [x] 5.4 **[Wildan/Core]** Add unit tests for conflicts, possible conflicts, sparse evidence, preference separation, and ranking edge cases
 
 ## 6. Results and restaurant questions
 

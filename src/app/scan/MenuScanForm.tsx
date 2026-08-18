@@ -32,12 +32,112 @@ function validateFile(file: File): string | null {
   return null;
 }
 
+function CameraCapture({
+  onCapture,
+  onCancel,
+}: {
+  onCapture: (file: File) => void;
+  onCancel: () => void;
+}) {
+  const videoRef = useRef<HTMLVideoElement>(null);
+  const streamRef = useRef<MediaStream | null>(null);
+  const [cameraError, setCameraError] = useState<string | null>(null);
+
+  useEffect(() => {
+    let cancelled = false;
+
+    navigator.mediaDevices
+      .getUserMedia({ video: { facingMode: "environment" } })
+      .then((stream) => {
+        if (cancelled) {
+          stream.getTracks().forEach((track) => track.stop());
+          return;
+        }
+        streamRef.current = stream;
+        if (videoRef.current) {
+          videoRef.current.srcObject = stream;
+        }
+      })
+      .catch(() => {
+        if (!cancelled) {
+          setCameraError(
+            "Couldn't access the camera. Check your browser's camera permission, or upload a photo instead.",
+          );
+        }
+      });
+
+    return () => {
+      cancelled = true;
+      streamRef.current?.getTracks().forEach((track) => track.stop());
+    };
+  }, []);
+
+  function handleCapture() {
+    const video = videoRef.current;
+    if (!video || !video.videoWidth) {
+      return;
+    }
+
+    const canvas = document.createElement("canvas");
+    canvas.width = video.videoWidth;
+    canvas.height = video.videoHeight;
+    canvas.getContext("2d")?.drawImage(video, 0, 0);
+
+    canvas.toBlob(
+      (blob) => {
+        if (!blob) {
+          return;
+        }
+        onCapture(new File([blob], "menu-photo.jpg", { type: "image/jpeg" }));
+      },
+      "image/jpeg",
+      0.92,
+    );
+  }
+
+  if (cameraError) {
+    return (
+      <div
+        className="flex flex-col items-center gap-4 rounded-xl border-2 border-dashed bg-white p-8 text-center"
+        style={{ borderColor: PALETTE.brandy }}
+      >
+        <p className="text-sm text-neutral-700">{cameraError}</p>
+        <Button type="button" variant="outline" onClick={onCancel}>
+          Back
+        </Button>
+      </div>
+    );
+  }
+
+  return (
+    <div className="flex flex-col gap-4">
+      <div className="overflow-hidden rounded-xl border-2 bg-black" style={{ borderColor: PALETTE.oliveLeaf }}>
+        <video ref={videoRef} autoPlay playsInline muted className="max-h-96 w-full object-contain" />
+      </div>
+      <div className="flex flex-wrap gap-3">
+        <Button
+          type="button"
+          onClick={handleCapture}
+          style={{ backgroundColor: PALETTE.rustySpice }}
+          className="border-transparent text-white hover:opacity-90"
+        >
+          <CameraIcon aria-hidden="true" />
+          Capture
+        </Button>
+        <Button type="button" variant="outline" onClick={onCancel}>
+          Cancel
+        </Button>
+      </div>
+    </div>
+  );
+}
+
 export function MenuScanForm() {
   const profile = useCurrentUserProfile();
   const [image, setImage] = useState<SelectedImage | null>(null);
+  const [cameraOpen, setCameraOpen] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [scanRequested, setScanRequested] = useState(false);
-  const cameraInputRef = useRef<HTMLInputElement>(null);
   const fileInputRef = useRef<HTMLInputElement>(null);
 
   useEffect(() => {
@@ -48,13 +148,7 @@ export function MenuScanForm() {
     };
   }, [image]);
 
-  function handleFileChange(event: React.ChangeEvent<HTMLInputElement>) {
-    const file = event.target.files?.[0];
-    event.target.value = "";
-    if (!file) {
-      return;
-    }
-
+  function acceptFile(file: File) {
     const validationError = validateFile(file);
     if (validationError) {
       setError(validationError);
@@ -66,7 +160,16 @@ export function MenuScanForm() {
     }
     setError(null);
     setScanRequested(false);
+    setCameraOpen(false);
     setImage({ file, previewUrl: URL.createObjectURL(file) });
+  }
+
+  function handleFileChange(event: React.ChangeEvent<HTMLInputElement>) {
+    const file = event.target.files?.[0];
+    event.target.value = "";
+    if (file) {
+      acceptFile(file);
+    }
   }
 
   function handleRemove() {
@@ -98,16 +201,12 @@ export function MenuScanForm() {
     );
   }
 
+  if (cameraOpen) {
+    return <CameraCapture onCapture={acceptFile} onCancel={() => setCameraOpen(false)} />;
+  }
+
   return (
     <div className="flex flex-col gap-4">
-      <input
-        ref={cameraInputRef}
-        type="file"
-        accept="image/*"
-        capture="environment"
-        onChange={handleFileChange}
-        className="hidden"
-      />
       <input
         ref={fileInputRef}
         type="file"
@@ -127,7 +226,7 @@ export function MenuScanForm() {
           <div className="flex flex-wrap justify-center gap-3">
             <Button
               type="button"
-              onClick={() => cameraInputRef.current?.click()}
+              onClick={() => setCameraOpen(true)}
               style={{ backgroundColor: PALETTE.rustySpice }}
               className="border-transparent text-white hover:opacity-90"
             >

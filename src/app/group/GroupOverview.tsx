@@ -103,8 +103,8 @@ function GroupSummary({ group }: { group: Group }) {
       </div>
 
       <ul className="grid grid-cols-1 gap-3 sm:grid-cols-2">
-        {group.members.map((member) => (
-          <MemberCard key={member.id} member={member} />
+        {group.members.map((member, index) => (
+          <MemberCard key={`${index}-${member.id}`} member={member} />
         ))}
       </ul>
 

@@ -75,6 +75,8 @@ The deterministic baseline recognizes the demo group's vegan, no-beef, seafood-a
 
 Keep `OPENAI_API_KEY` and `TAVILY_API_KEY` in server-only environment variables. Validate file type and size before forwarding an image, validate all request bodies, avoid logging profile/image content, and add basic request limits suitable for a public demo deployment.
 
+The analysis boundary accepts only multipart JPEG, PNG, or WebP images up to 8 MB and a bounded profile contract. It rejects oversized declared request bodies before parsing, returns validated NDJSON errors without internal provider details, and applies a best-effort per-instance limit of five scans per client per minute. This in-memory throttle is deliberately prototype-grade; production-scale or multi-region enforcement would require shared infrastructure outside MVP scope. Static tests and Next.js `server-only` boundaries prevent credential identifiers and values from entering client modules.
+
 ### Demo resilience
 
 Use a prepared clear image and keep a second image available outside the application. Add retry and reset paths, retain extraction when Tavily fails, and test the exact demo profiles/menu before presentation. Do not ship hardcoded analysis output disguised as a live result.

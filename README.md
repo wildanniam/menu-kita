@@ -54,6 +54,8 @@ Material restaurant questions are generated through `src/lib/questions/restauran
 
 The complete server workflow is coordinated in `src/lib/analysis/analyze-menu.ts` and exposed as a newline-delimited JSON stream at `POST /api/analyze`. It emits only real high-level stages, runs independent dish research concurrently, preserves unresolved evidence when Tavily is unavailable, and validates the final result before streaming it to the client.
 
+The endpoint accepts multipart fields `image` (JPEG, PNG, or WebP; maximum 8 MB) and `profile` (the JSON questionnaire profile). It returns NDJSON stage/result records and contract-valid safe error records. A lightweight per-instance throttle allows five analysis attempts per client per minute; it is intended only for this time-boxed demo.
+
 ## Locked prototype scope
 
 - English, responsive group-only web experience

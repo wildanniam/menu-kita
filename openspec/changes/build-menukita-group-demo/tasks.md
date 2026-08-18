@@ -51,7 +51,7 @@
 ## 7. Presentation and verification
 
 - [ ] 7.1 **[Moomina/UI]** Integrate the collaborator-provided visual direction and responsive interaction states without changing domain behavior
-- [ ] 7.2 **[Wildan/Core]** Add API input limits, safe error responses, basic request throttling, and checks preventing secret exposure
+- [x] 7.2 **[Wildan/Core]** Add API input limits, safe error responses, basic request throttling, and checks preventing secret exposure
 - [ ] 7.3 **[Wildan/Core]** Add integration tests for questionnaire-to-group flow and agent fallback behavior using deterministic fixtures
 - [ ] 7.4 **[Wildan/Core]** Run lint, type checks, tests, production build, and browser checks across mobile and desktop widths
 - [ ] 7.5 **[Shared]** Verify the exact primary and backup menu images with the approved group profiles and document the live demo sequence and fallback plan

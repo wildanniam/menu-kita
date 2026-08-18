@@ -50,6 +50,8 @@ The live matrix uses one batch preference request for all member/dish pairs. Mis
 
 Group and per-member ranking lives in `src/lib/compatibility/recommendations.ts`. It rejects incomplete matrices, excludes conflicts from member fallbacks, and ranks group candidates by conflicts, confirmation burden, evidence sufficiency, then preference fit.
 
+Material restaurant questions are generated through `src/lib/questions/restaurant-questions.ts`. Non-English menus receive English and detected-language text, English menus avoid duplicate translations, and invalid model references fall back to bounded questions derived from known uncertainties.
+
 ## Locked prototype scope
 
 - English, responsive group-only web experience

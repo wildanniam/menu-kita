@@ -45,7 +45,7 @@
 
 - [ ] 6.1 **[Moomina/UI]** Build responsive analysis progress using only actual workflow stages
 - [ ] 6.2 **[Moomina/UI]** Build the group recommendation summary and responsive compatibility matrix with expandable evidence
-- [ ] 6.3 **[Wildan/Core]** Generate material confirmation questions in English and the detected menu language
+- [x] 6.3 **[Wildan/Core]** Generate material confirmation questions in English and the detected menu language
 - [ ] 6.4 **[Moomina/UI]** Build the question display, local-language copy action, uncertainty messaging, and safety disclaimer
 
 ## 7. Presentation and verification

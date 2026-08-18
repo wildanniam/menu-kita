@@ -42,6 +42,8 @@ Deterministic hard-restriction evaluation lives in `src/lib/compatibility/restri
 
 The research planner in `src/lib/research/research-planner.ts` offers GPT-4o mini only dishes with material hard-restriction uncertainty, then enforces a maximum of three researched dishes and two searches per dish in application code.
 
+Research evidence normalization lives in `src/lib/research/evidence-normalizer.ts`. It accepts claims only for exact Tavily source URLs, labels them as common usage, preserves menu-listed evidence, and emits unresolved evidence when research or normalization fails.
+
 ## Locked prototype scope
 
 - English, responsive group-only web experience

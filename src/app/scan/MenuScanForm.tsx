@@ -1,11 +1,10 @@
 "use client";
 
 import { CameraIcon, CheckIcon, ImageUpIcon, XIcon } from "lucide-react";
-import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useEffect, useRef, useState } from "react";
 
-import { Button } from "@/components/ui/button";
+import { AnimatedButton, AnimatedLinkButton } from "@/components/ui/animated-button";
 import { useCurrentUserProfile } from "@/lib/storage/profile-storage";
 
 const PALETTE = {
@@ -103,9 +102,9 @@ function CameraCapture({
         style={{ borderColor: PALETTE.brandy }}
       >
         <p className="text-sm text-neutral-700">{cameraError}</p>
-        <Button type="button" variant="outline" onClick={onCancel}>
+        <AnimatedButton type="button" onClick={onCancel}>
           Back
-        </Button>
+        </AnimatedButton>
       </div>
     );
   }
@@ -116,18 +115,13 @@ function CameraCapture({
         <video ref={videoRef} autoPlay playsInline muted className="max-h-96 w-full object-contain" />
       </div>
       <div className="flex flex-wrap gap-3">
-        <Button
-          type="button"
-          onClick={handleCapture}
-          style={{ backgroundColor: PALETTE.rustySpice }}
-          className="border-transparent text-white hover:opacity-90"
-        >
+        <AnimatedButton type="button" onClick={handleCapture}>
           <CameraIcon aria-hidden="true" />
           Capture
-        </Button>
-        <Button type="button" variant="outline" onClick={onCancel}>
+        </AnimatedButton>
+        <AnimatedButton type="button" onClick={onCancel}>
           Cancel
-        </Button>
+        </AnimatedButton>
       </div>
     </div>
   );
@@ -189,13 +183,9 @@ export function MenuScanForm() {
         <p className="text-base text-neutral-700">
           Complete the questionnaire first so we know who&apos;s scanning.
         </p>
-        <Button
-          render={<Link href="/onboarding" />}
-          style={{ backgroundColor: PALETTE.rustySpice }}
-          className="border-transparent text-white hover:opacity-90"
-        >
+        <AnimatedLinkButton href="/onboarding">
           Go to questionnaire
-        </Button>
+        </AnimatedLinkButton>
       </div>
     );
   }
@@ -223,24 +213,17 @@ export function MenuScanForm() {
             Works with menus in any language, including Indonesian.
           </p>
           <div className="flex flex-wrap justify-center gap-3">
-            <Button
-              type="button"
-              onClick={() => setCameraOpen(true)}
-              style={{ backgroundColor: PALETTE.rustySpice }}
-              className="border-transparent text-white hover:opacity-90"
-            >
+            <AnimatedButton type="button" onClick={() => setCameraOpen(true)}>
               <CameraIcon aria-hidden="true" />
               Take a photo
-            </Button>
-            <Button
+            </AnimatedButton>
+            <AnimatedButton
               type="button"
-              variant="outline"
               onClick={() => fileInputRef.current?.click()}
-              style={{ borderColor: PALETTE.oliveLeaf, color: PALETTE.oliveLeaf }}
             >
               <ImageUpIcon aria-hidden="true" />
               Upload from device
-            </Button>
+            </AnimatedButton>
           </div>
           {error && <p className="text-sm text-red-600">{error}</p>}
         </div>
@@ -255,33 +238,16 @@ export function MenuScanForm() {
             />
           </div>
 
-          <div className="flex items-center justify-center gap-6">
-            <div className="flex flex-col items-center gap-1.5">
-              <Button
-                type="button"
-                size="icon-lg"
-                aria-label="Retake photo"
-                onClick={handleRemove}
-                className="rounded-full border-transparent bg-neutral-700 text-white hover:opacity-90"
-              >
-                <XIcon aria-hidden="true" />
-              </Button>
-              <span className="text-xs text-neutral-600">Retake photo</span>
-            </div>
+          <div className="flex flex-wrap items-center justify-center gap-3">
+            <AnimatedButton type="button" onClick={handleRemove}>
+              <XIcon aria-hidden="true" />
+              Retake photo
+            </AnimatedButton>
 
-            <div className="flex flex-col items-center gap-1.5">
-              <Button
-                type="button"
-                size="icon-lg"
-                aria-label="Scan photo"
-                onClick={() => router.push("/analyzing")}
-                style={{ backgroundColor: PALETTE.oliveLeaf }}
-                className="rounded-full border-transparent text-white hover:opacity-90"
-              >
-                <CheckIcon aria-hidden="true" />
-              </Button>
-              <span className="text-xs text-neutral-600">Scan photo</span>
-            </div>
+            <AnimatedButton type="button" onClick={() => router.push("/analyzing")}>
+              <CheckIcon aria-hidden="true" />
+              Scan photo
+            </AnimatedButton>
           </div>
         </div>
       )}

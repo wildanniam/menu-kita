@@ -404,9 +404,7 @@ function QuestionnaireFormInner({
         onChange={(values) => updateTagList("dislikes", values)}
       />
 
-      <AnimatedButton type="submit" className="w-full sm:w-auto">
-        Continue
-      </AnimatedButton>
+      <AnimatedButton type="submit">Continue</AnimatedButton>
     </form>
   );
 }

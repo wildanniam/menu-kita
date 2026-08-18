@@ -47,6 +47,13 @@ describe("analyzeMenuImage", () => {
     const result = await analyzeMenuImage({
       image: image(),
       profile,
+      location: {
+        source: "manual",
+        city: "Jakarta",
+        region: null,
+        country: null,
+        countryCode: "ID",
+      },
       fetcher,
       onStage: ({ stage }) => stages.push(stage),
     });
@@ -56,6 +63,12 @@ describe("analyzeMenuImage", () => {
     const request = fetcher.mock.calls[0][1];
     expect(request.body).toBeInstanceOf(FormData);
     expect(request.body.get("profile")).toBe(JSON.stringify(profile));
+    expect(JSON.parse(String(request.body.get("location")))).toMatchObject({
+      source: "manual",
+      city: "Jakarta",
+      countryCode: "ID",
+    });
+    expect(request.body.get("location")).not.toContain("latitude");
   });
 
   it("surfaces safe streamed API errors", async () => {
@@ -88,5 +101,25 @@ describe("analyzeMenuImage", () => {
     await expect(
       analyzeMenuImage({ image: image(), profile, fetcher }),
     ).rejects.toMatchObject({ code: "INVALID_ANALYSIS_STREAM" });
+  });
+
+  it("normalizes cancellation after the streamed response has started", async () => {
+    const abortController = new AbortController();
+    const stream = new ReadableStream<Uint8Array>({
+      start(controller) {
+        abortController.abort();
+        controller.error(new DOMException("cancelled", "AbortError"));
+      },
+    });
+    const fetcher = vi.fn().mockResolvedValue(new Response(stream));
+
+    await expect(
+      analyzeMenuImage({
+        image: image(),
+        profile,
+        signal: abortController.signal,
+        fetcher,
+      }),
+    ).rejects.toMatchObject({ code: "ANALYSIS_CANCELLED" });
   });
 });

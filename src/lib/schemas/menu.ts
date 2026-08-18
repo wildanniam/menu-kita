@@ -1,5 +1,7 @@
 import { z } from "zod";
 
+import { httpUrlSchema } from "./url";
+
 export const evidenceTypeSchema = z.enum([
   "menu_listed",
   "common_usage",
@@ -11,13 +13,13 @@ export const evidenceSchema = z.object({
   claim: z.string().trim().min(1),
   type: evidenceTypeSchema,
   sourceTitle: z.string().trim().min(1).nullable().default(null),
-  sourceUrl: z.url().nullable().default(null),
+  sourceUrl: httpUrlSchema.nullable().default(null),
   restaurantConfirmed: z.boolean().default(false),
 });
 
 export const researchSourceSchema = z.object({
   title: z.string().trim().min(1),
-  url: z.url(),
+  url: httpUrlSchema,
   snippet: z.string().trim().min(1),
   score: z.number().min(0).max(1).optional(),
 });

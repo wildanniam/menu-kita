@@ -10,7 +10,7 @@ import {
   type PreferenceEvaluationModel,
   type PreferenceModelInput,
 } from "../compatibility";
-import { getServerEnv } from "../env";
+import { getOpenAIClient } from "./openai-client";
 
 const PREFERENCE_MODEL = "gpt-4o-mini";
 
@@ -24,19 +24,13 @@ Rules:
 - Do not invent flavor, texture, spice, or preparation details.
 - A preference score cannot imply that a dish is safe or compatible.`;
 
-let cachedClient: OpenAI | undefined;
-
-function getOpenAIClient(): OpenAI {
-  if (!cachedClient) {
-    cachedClient = new OpenAI({ apiKey: getServerEnv().OPENAI_API_KEY });
-  }
-  return cachedClient;
-}
-
 export class OpenAIPreferenceEvaluationModel
   implements PreferenceEvaluationModel
 {
-  constructor(private readonly client: OpenAI = getOpenAIClient()) {}
+  constructor(
+    private readonly client: OpenAI = getOpenAIClient(),
+    private readonly signal?: AbortSignal,
+  ) {}
 
   async evaluate(input: PreferenceModelInput): Promise<unknown> {
     const response = await this.client.responses.create({
@@ -48,7 +42,7 @@ export class OpenAIPreferenceEvaluationModel
         format: zodTextFormat(preferenceModelOutputSchema, "preference_fit"),
       },
       max_output_tokens: 1_200,
-    });
+    }, { signal: this.signal });
 
     return JSON.parse(response.output_text) as unknown;
   }
@@ -57,7 +51,10 @@ export class OpenAIPreferenceEvaluationModel
 export class OpenAIBatchPreferenceEvaluationModel
   implements BatchPreferenceEvaluationModel
 {
-  constructor(private readonly client: OpenAI = getOpenAIClient()) {}
+  constructor(
+    private readonly client: OpenAI = getOpenAIClient(),
+    private readonly signal?: AbortSignal,
+  ) {}
 
   async evaluateBatch(
     input: Parameters<BatchPreferenceEvaluationModel["evaluateBatch"]>[0],
@@ -74,7 +71,7 @@ export class OpenAIBatchPreferenceEvaluationModel
         ),
       },
       max_output_tokens: 6_000,
-    });
+    }, { signal: this.signal });
 
     return JSON.parse(response.output_text) as unknown;
   }

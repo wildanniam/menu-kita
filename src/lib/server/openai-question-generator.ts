@@ -3,11 +3,11 @@ import "server-only";
 import OpenAI from "openai";
 import { zodTextFormat } from "openai/helpers/zod";
 
-import { getServerEnv } from "../env";
 import {
   questionGenerationOutputSchema,
   type RestaurantQuestionModel,
 } from "../questions";
+import { getOpenAIClient } from "./openai-client";
 
 const QUESTION_MODEL = "gpt-4o-mini";
 
@@ -21,17 +21,11 @@ Rules:
 - Preserve dish ids and use only supplied member ids.
 - Do not claim that a general recipe is the restaurant's exact recipe.`;
 
-let cachedClient: OpenAI | undefined;
-
-function getOpenAIClient(): OpenAI {
-  if (!cachedClient) {
-    cachedClient = new OpenAI({ apiKey: getServerEnv().OPENAI_API_KEY });
-  }
-  return cachedClient;
-}
-
 export class OpenAIRestaurantQuestionModel implements RestaurantQuestionModel {
-  constructor(private readonly client: OpenAI = getOpenAIClient()) {}
+  constructor(
+    private readonly client: OpenAI = getOpenAIClient(),
+    private readonly signal?: AbortSignal,
+  ) {}
 
   async generate(
     input: Parameters<RestaurantQuestionModel["generate"]>[0],
@@ -48,7 +42,7 @@ export class OpenAIRestaurantQuestionModel implements RestaurantQuestionModel {
         ),
       },
       max_output_tokens: 2_000,
-    });
+    }, { signal: this.signal });
 
     return JSON.parse(response.output_text) as unknown;
   }

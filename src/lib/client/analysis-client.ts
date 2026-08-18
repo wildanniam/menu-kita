@@ -3,6 +3,7 @@ import {
   analysisStreamEventSchema,
   type AnalysisResult,
   type AnalysisStageEvent,
+  type LocationContext,
   type FoodProfile,
 } from "../schemas";
 
@@ -20,6 +21,7 @@ export class AnalysisClientError extends Error {
 export interface AnalyzeMenuImageInput {
   image: File;
   profile: FoodProfile;
+  location?: LocationContext | null;
   onStage?: (event: AnalysisStageEvent) => void;
   signal?: AbortSignal;
   fetcher?: typeof fetch;
@@ -67,6 +69,7 @@ function parseEventLine(
 export async function analyzeMenuImage({
   image,
   profile,
+  location,
   onStage,
   signal,
   fetcher = fetch,
@@ -74,6 +77,7 @@ export async function analyzeMenuImage({
   const form = new FormData();
   form.set("image", image);
   form.set("profile", JSON.stringify(profile));
+  if (location) form.set("location", JSON.stringify(location));
 
   let response: Response;
   try {
@@ -111,18 +115,29 @@ export async function analyzeMenuImage({
   let buffer = "";
   let result: AnalysisResult | undefined;
 
-  while (true) {
-    const { done, value } = await reader.read();
-    buffer += decoder.decode(value, { stream: !done });
-    const lines = buffer.split("\n");
-    buffer = lines.pop() ?? "";
+  try {
+    while (true) {
+      const { done, value } = await reader.read();
+      buffer += decoder.decode(value, { stream: !done });
+      const lines = buffer.split("\n");
+      buffer = lines.pop() ?? "";
 
-    for (const line of lines) {
-      if (!line.trim()) continue;
-      result = parseEventLine(line, onStage) ?? result;
+      for (const line of lines) {
+        if (!line.trim()) continue;
+        result = parseEventLine(line, onStage) ?? result;
+      }
+
+      if (done) break;
     }
-
-    if (done) break;
+  } catch (error) {
+    if (signal?.aborted || (error instanceof DOMException && error.name === "AbortError")) {
+      throw new AnalysisClientError(
+        "ANALYSIS_CANCELLED",
+        "Analysis was cancelled.",
+        true,
+      );
+    }
+    throw error;
   }
 
   if (buffer.trim()) {

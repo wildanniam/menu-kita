@@ -2,6 +2,7 @@ import { analysisResultSchema, analysisStageEventSchema } from "../schemas";
 import type {
   AnalysisResult,
   AnalysisStageEvent,
+  LocationContext,
   Dish,
   FoodProfile,
   MenuExtraction,
@@ -30,6 +31,7 @@ export interface AnalyzeMenuDependencies {
 export interface AnalyzeMenuInput {
   imageDataUrl: string;
   profiles: FoodProfile[];
+  location?: LocationContext | null;
 }
 
 export type EmitAnalysisStage = (event: AnalysisStageEvent) => void | Promise<void>;
@@ -151,6 +153,7 @@ export async function analyzeMenu(
     extractedMenu,
     input.profiles,
     dependencies.researchPlanner,
+    input.location ?? null,
   );
 
   let menu = extractedMenu;

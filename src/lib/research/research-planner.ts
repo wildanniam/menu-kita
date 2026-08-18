@@ -1,7 +1,7 @@
 import { z } from "zod";
 
 import { evaluateHardRestrictions } from "../compatibility";
-import type { FoodProfile, MenuExtraction } from "../schemas";
+import type { FoodProfile, LocationContext, MenuExtraction } from "../schemas";
 
 export const MAX_RESEARCH_DISHES = 3;
 export const MAX_SEARCHES_PER_DISH = 2;
@@ -37,6 +37,7 @@ export interface ResearchCandidate {
   listedIngredients: string[];
   hardRestrictions: string[];
   materialReasons: string[];
+  locationLabel: string | null;
 }
 
 export interface ResearchPlannerModel {
@@ -52,7 +53,9 @@ function unique(values: string[]): string[] {
 export function identifyResearchCandidates(
   menu: MenuExtraction,
   profiles: FoodProfile[],
+  location: LocationContext | null = null,
 ): ResearchCandidate[] {
+  const locationLabel = formatLocationLabel(location);
   return menu.dishes.flatMap((dish) => {
     const evaluations = profiles.map((profile) => ({
       profile,
@@ -86,9 +89,31 @@ export function identifyResearchCandidates(
             ...evaluation.uncertainties,
           ]),
         ),
+        locationLabel,
       },
     ];
   });
+}
+
+export function formatLocationLabel(
+  location: LocationContext | null | undefined,
+): string | null {
+  if (!location) return null;
+  const parts = unique(
+    [location.city, location.region, location.country].filter(
+      (part): part is string => Boolean(part),
+    ),
+  );
+  return parts.length > 0 ? parts.join(", ") : null;
+}
+
+function localizeQuery(query: string, locationLabel: string | null): string {
+  if (!locationLabel) return query.trim();
+  if (query.toLowerCase().includes(locationLabel.toLowerCase())) {
+    return query.trim();
+  }
+  const suffix = ` in ${locationLabel}`;
+  return `${query.trim().slice(0, 300 - suffix.length)}${suffix}`;
 }
 
 function fallbackQueries(candidate: ResearchCandidate): string[] {
@@ -98,7 +123,9 @@ function fallbackQueries(candidate: ResearchCandidate): string[] {
   return unique([
     `${dishName} common ingredients preparation ${restrictions}`.trim(),
     `${dishName} allergens dietary ingredients`.trim(),
-  ]).slice(0, MAX_SEARCHES_PER_DISH);
+  ])
+    .map((query) => localizeQuery(query, candidate.locationLabel))
+    .slice(0, MAX_SEARCHES_PER_DISH);
 }
 
 function fallbackPlan(candidates: ResearchCandidate[]): ResearchPlan {
@@ -120,8 +147,9 @@ export async function createResearchPlan(
   menu: MenuExtraction,
   profiles: FoodProfile[],
   model: ResearchPlannerModel,
+  location: LocationContext | null = null,
 ): Promise<ResearchPlan> {
-  const candidates = identifyResearchCandidates(menu, profiles);
+  const candidates = identifyResearchCandidates(menu, profiles, location);
 
   if (candidates.length === 0) {
     return { items: [], skippedDishIds: menu.dishes.map(({ id }) => id) };
@@ -155,7 +183,11 @@ export async function createResearchPlan(
       return [];
     }
 
-    const queries = unique(decision.queries.map((query) => query.trim()))
+    const queries = unique(
+      decision.queries.map((query) =>
+        localizeQuery(query, candidate.locationLabel),
+      ),
+    )
       .filter(Boolean)
       .slice(0, MAX_SEARCHES_PER_DISH);
     selectedIds.add(decision.dishId);

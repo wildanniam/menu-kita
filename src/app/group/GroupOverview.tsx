@@ -14,6 +14,7 @@ import { WheatIcon } from "@/components/icons/wheat-icon";
 import { buildDemoGroup } from "@/lib/data/demo-group";
 import type { FoodProfile, Group, SpiceTolerance } from "@/lib/schemas";
 import { useCurrentUserProfile } from "@/lib/storage/profile-storage";
+import { joinDemoGroup, useJoinedDemoGroup } from "@/lib/storage/group-storage";
 
 const PALETTE = {
   rustySpice: "#AD390B",
@@ -122,6 +123,7 @@ function GroupSummary({ group }: { group: Group }) {
 
 export function GroupOverview() {
   const profile = useCurrentUserProfile();
+  const joined = useJoinedDemoGroup();
 
   if (!profile) {
     return (
@@ -140,5 +142,34 @@ export function GroupOverview() {
     );
   }
 
-  return <GroupSummary group={buildDemoGroup(profile)} />;
+  const group = buildDemoGroup(profile);
+  if (!joined) {
+    return (
+      <section
+        className="flex flex-col gap-5 rounded-2xl border-2 bg-white p-6"
+        style={{ borderColor: PALETTE.oliveLeaf }}
+      >
+        <div>
+          <p className="text-xs font-semibold tracking-[0.18em] uppercase" style={{ color: PALETTE.rustySpice }}>
+            Available group
+          </p>
+          <h2 className="mt-2 text-2xl font-bold text-neutral-900">{group.name}</h2>
+          <p className="mt-1 text-sm text-neutral-600">{group.description}</p>
+          <p className="mt-3 text-sm font-medium text-neutral-700">
+            {group.members.length} diners · preset demo group
+          </p>
+        </div>
+        <Button
+          type="button"
+          onClick={joinDemoGroup}
+          style={{ backgroundColor: PALETTE.rustySpice }}
+          className="w-full border-transparent text-white hover:opacity-90 sm:w-fit"
+        >
+          Join {group.name}
+        </Button>
+      </section>
+    );
+  }
+
+  return <GroupSummary group={group} />;
 }

@@ -1,6 +1,11 @@
 import { z } from "zod";
 
-import { foodProfileSchema, type FoodProfile } from "../schemas";
+import {
+  locationContextSchema,
+  foodProfileSchema,
+  type LocationContext,
+  type FoodProfile,
+} from "../schemas";
 
 export const MAX_IMAGE_BYTES = 8 * 1024 * 1024;
 export const MAX_REQUEST_BYTES = MAX_IMAGE_BYTES + 256 * 1024;
@@ -27,7 +32,8 @@ export type AnalyzeRequestErrorCode =
   | "UNSUPPORTED_IMAGE_TYPE"
   | "EMPTY_IMAGE"
   | "IMAGE_TOO_LARGE"
-  | "INVALID_PROFILE";
+  | "INVALID_PROFILE"
+  | "INVALID_CONTEXT";
 
 export class AnalyzeRequestError extends Error {
   constructor(
@@ -43,6 +49,7 @@ export class AnalyzeRequestError extends Error {
 export interface ParsedAnalyzeRequest {
   imageDataUrl: string;
   profile: FoodProfile;
+  location: LocationContext | null;
 }
 
 function parseContentLength(request: Request): number | undefined {
@@ -81,6 +88,38 @@ function parseProfile(value: FormDataEntryValue | null): FoodProfile {
     );
   }
 
+  return parsed.data;
+}
+
+function parseLocation(value: FormDataEntryValue | null): LocationContext | null {
+  if (value === null) return null;
+  if (typeof value !== "string" || value.length > 4_096) {
+    throw new AnalyzeRequestError(
+      "INVALID_CONTEXT",
+      400,
+      "The location context is invalid.",
+    );
+  }
+
+  let decoded: unknown;
+  try {
+    decoded = JSON.parse(value);
+  } catch {
+    throw new AnalyzeRequestError(
+      "INVALID_CONTEXT",
+      400,
+      "The location context is invalid.",
+    );
+  }
+
+  const parsed = locationContextSchema.safeParse(decoded);
+  if (!parsed.success) {
+    throw new AnalyzeRequestError(
+      "INVALID_CONTEXT",
+      400,
+      "The location context is invalid.",
+    );
+  }
   return parsed.data;
 }
 
@@ -149,5 +188,6 @@ export async function parseAnalyzeRequest(
   return {
     imageDataUrl: await fileToDataUrl(image),
     profile: parseProfile(form.get("profile")),
+    location: parseLocation(form.get("location")),
   };
 }

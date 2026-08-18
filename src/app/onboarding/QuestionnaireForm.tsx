@@ -13,7 +13,7 @@ import type { ReactNode } from "react";
 
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import { Field, FieldError, FieldLabel } from "@/components/ui/field";
+import { Field, FieldLabel } from "@/components/ui/field";
 import { Input } from "@/components/ui/input";
 import { InputGroup, InputGroupAddon, InputGroupInput } from "@/components/ui/input-group";
 import { ToggleGroup, ToggleGroupItem } from "@/components/ui/toggle-group";
@@ -33,11 +33,13 @@ import {
   saveCurrentUserProfile,
   useCurrentUserProfile,
 } from "@/lib/storage/profile-storage";
+import { clearJoinedDemoGroup } from "@/lib/storage/group-storage";
 
 type TagListField = "dietaryRequirements" | "allergies" | "likes" | "dislikes";
 
 interface FormErrors {
   name?: string;
+  spiceTolerance?: string;
 }
 
 const PALETTE = {
@@ -284,6 +286,9 @@ function QuestionnaireFormInner({
     if (name.trim().length === 0) {
       nextErrors.name = "Enter your name.";
     }
+    if (!spiceTolerance) {
+      nextErrors.spiceTolerance = "Choose your spice tolerance.";
+    }
     return nextErrors;
   }
 
@@ -305,12 +310,13 @@ function QuestionnaireFormInner({
         dietaryRequirementsInputRef,
       ),
       allergies: withPendingDraft(tagLists.allergies, allergiesInputRef),
-      spiceTolerance: spiceTolerance === "" ? "spicy" : spiceTolerance,
+      spiceTolerance,
       likes: withPendingDraft(tagLists.likes, likesInputRef),
       dislikes: withPendingDraft(tagLists.dislikes, dislikesInputRef),
     });
 
     saveCurrentUserProfile(profile);
+    clearJoinedDemoGroup();
     router.push("/group");
   }
 
@@ -326,15 +332,21 @@ function QuestionnaireFormInner({
           aria-invalid={Boolean(errors.name)}
           aria-describedby={errors.name ? "name-error" : undefined}
         />
-        {errors.name && <FieldError id="name-error">{errors.name}</FieldError>}
+        {errors.name && (
+          <p id="name-error" role="alert" className="text-xs text-red-700">
+            {errors.name}
+          </p>
+        )}
       </Field>
 
-      <Field className="gap-2">
-        <FieldLabel>Spice tolerance</FieldLabel>
+      <Field data-invalid={errors.spiceTolerance ? true : undefined} className="gap-2">
+        <FieldLabel>Spice tolerance *</FieldLabel>
         <ToggleGroup
           value={spiceTolerance ? [spiceTolerance] : []}
           onValueChange={handleSpiceValueChange}
           aria-label="Spice tolerance"
+          aria-invalid={Boolean(errors.spiceTolerance)}
+          aria-describedby={errors.spiceTolerance ? "spice-error" : undefined}
           className="flex flex-wrap gap-2"
         >
           <ToggleGroupItem
@@ -370,6 +382,11 @@ function QuestionnaireFormInner({
             Spicy
           </ToggleGroupItem>
         </ToggleGroup>
+        {errors.spiceTolerance && (
+          <p id="spice-error" role="alert" className="text-xs text-red-700">
+            {errors.spiceTolerance}
+          </p>
+        )}
       </Field>
 
       <TagListInput

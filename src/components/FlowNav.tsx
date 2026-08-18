@@ -9,6 +9,10 @@ import {
   clearCurrentUserProfile,
   useCurrentUserProfile,
 } from "@/lib/storage/profile-storage";
+import {
+  clearJoinedDemoGroup,
+  useJoinedDemoGroup,
+} from "@/lib/storage/group-storage";
 import { cn } from "@/lib/utils";
 
 const PALETTE = {
@@ -26,10 +30,12 @@ export function FlowNav({ current }: { current: (typeof STEPS)[number]["href"] }
   const router = useRouter();
   const profile = useCurrentUserProfile();
   const analysis = useAnalysisResult();
+  const joinedGroup = useJoinedDemoGroup();
 
   function resetSession() {
     clearAnalysisResult();
     clearCurrentUserProfile();
+    clearJoinedDemoGroup();
     router.replace("/onboarding");
   }
 
@@ -39,8 +45,10 @@ export function FlowNav({ current }: { current: (typeof STEPS)[number]["href"] }
         {STEPS.map((step) => {
           const active = step.href === current;
           const disabled =
-            (step.href === "/group" || step.href === "/scan") && !profile
+            step.href === "/group" && !profile
               ? true
+              : step.href === "/scan" && (!profile || !joinedGroup)
+                ? true
               : step.href === "/results" && !analysis;
           return (
             <Link

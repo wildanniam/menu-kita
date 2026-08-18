@@ -12,9 +12,11 @@ import {
   clearAnalysisResult,
   saveAnalysisResult,
 } from "@/lib/client";
-import type { AnalysisStageEvent } from "@/lib/schemas";
+import type { AnalysisStageEvent, LocationContext } from "@/lib/schemas";
 import { useCurrentUserProfile } from "@/lib/storage/profile-storage";
+import { useJoinedDemoGroup } from "@/lib/storage/group-storage";
 import { AnalysisProgress } from "./AnalysisProgress";
+import { LocationContextFields } from "./LocationContextFields";
 
 const PALETTE = {
   rustySpice: "#AD390B",
@@ -145,11 +147,13 @@ function CameraCapture({
 export function MenuScanForm() {
   const router = useRouter();
   const profile = useCurrentUserProfile();
+  const joinedGroup = useJoinedDemoGroup();
   const [image, setImage] = useState<SelectedImage | null>(null);
   const [cameraOpen, setCameraOpen] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [isAnalyzing, setIsAnalyzing] = useState(false);
   const [stageEvents, setStageEvents] = useState<AnalysisStageEvent[]>([]);
+  const [location, setLocation] = useState<LocationContext | null>(null);
   const fileInputRef = useRef<HTMLInputElement>(null);
   const abortControllerRef = useRef<AbortController | null>(null);
 
@@ -211,6 +215,7 @@ export function MenuScanForm() {
       const result = await analyzeMenuImage({
         image: image.file,
         profile,
+        location,
         signal: controller.signal,
         onStage: (event) => {
           setStageEvents((current) => [...current, event]);
@@ -250,6 +255,26 @@ export function MenuScanForm() {
     );
   }
 
+  if (!joinedGroup) {
+    return (
+      <div
+        className="flex flex-col items-start gap-4 rounded-xl border-2 border-dashed bg-white p-6"
+        style={{ borderColor: PALETTE.brandy }}
+      >
+        <p className="text-base text-neutral-700">
+          Join the preset group first so we can match the menu for everyone.
+        </p>
+        <Button
+          render={<Link href="/group" />}
+          style={{ backgroundColor: PALETTE.rustySpice }}
+          className="border-transparent text-white hover:opacity-90"
+        >
+          Choose group
+        </Button>
+      </div>
+    );
+  }
+
   if (cameraOpen) {
     return <CameraCapture onCapture={acceptFile} onCancel={() => setCameraOpen(false)} />;
   }
@@ -266,7 +291,11 @@ export function MenuScanForm() {
 
       {isAnalyzing ? (
         <AnalysisProgress events={stageEvents} />
-      ) : !image ? (
+      ) : (
+        <LocationContextFields location={location} onChange={setLocation} />
+      )}
+
+      {isAnalyzing ? null : !image ? (
         <div
           className="flex flex-col items-center gap-4 rounded-xl border-2 border-dashed bg-white p-8 text-center"
           style={{ borderColor: PALETTE.oliveLeaf }}

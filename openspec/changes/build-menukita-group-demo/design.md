@@ -35,6 +35,8 @@ The approved demo group contains five people total: the current user, Wildan, wh
 
 Use Zod schemas as the boundary for model extraction, research synthesis, and final results. Preserve a stable dish ID and evidence records containing claim, type, source title, source URL, and whether the restaurant confirmed it. Invalid model output receives one controlled repair attempt; subsequent failure becomes a user-facing retry state.
 
+Provider-facing structured-output schemas must avoid unsupported JSON Schema formats such as `uri`. URL fields use bounded strings in the generated schema and retain an application-level HTTP/HTTPS refinement when parsed by Zod, so OpenAI accepts the response format without weakening runtime source validation.
+
 ### Sequential, observable orchestration
 
 Implement explicit server-side orchestration rather than an autonomous loop:
@@ -80,6 +82,8 @@ The analysis boundary accepts only multipart JPEG, PNG, or WebP images up to 8 M
 ### Demo resilience
 
 Use a prepared clear image and keep a second image available outside the application. Add retry and reset paths, retain extraction when Tavily fails, and test the exact demo profiles/menu before presentation. Do not ship hardcoded analysis output disguised as a live result.
+
+Use explicit provider deadlines and one whole-analysis abort signal. OpenAI calls use a 45-second bounded request timeout with no uncontrolled retry loop; the route aborts outstanding work after 150 seconds or when the client disconnects. The 45-second provider budget is calibrated against the dense acceptance menu, whose complete structured extraction takes roughly 26 seconds, while the larger route budget leaves bounded time for planning, Tavily, matching, and questions. Configure a 180-second Next.js route duration for deployment and log only stage names plus elapsed milliseconds—never menu images, profiles, queries, or result content.
 
 ### Fixture-first UI collaboration
 

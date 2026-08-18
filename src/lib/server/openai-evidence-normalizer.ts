@@ -3,12 +3,12 @@ import "server-only";
 import OpenAI from "openai";
 import { zodTextFormat } from "openai/helpers/zod";
 
-import { getServerEnv } from "../env";
 import {
   evidenceNormalizationOutputSchema,
   type EvidenceNormalizationInput,
   type EvidenceNormalizationModel,
 } from "../research";
+import { getOpenAIClient } from "./openai-client";
 
 const NORMALIZER_MODEL = "gpt-4o-mini";
 
@@ -22,19 +22,13 @@ Rules:
 - Return the exact supplied source URL for each decision.
 - If a source is weak or irrelevant, mark it irrelevant and return no claims.`;
 
-let cachedClient: OpenAI | undefined;
-
-function getOpenAIClient(): OpenAI {
-  if (!cachedClient) {
-    cachedClient = new OpenAI({ apiKey: getServerEnv().OPENAI_API_KEY });
-  }
-  return cachedClient;
-}
-
 export class OpenAIEvidenceNormalizationModel
   implements EvidenceNormalizationModel
 {
-  constructor(private readonly client: OpenAI = getOpenAIClient()) {}
+  constructor(
+    private readonly client: OpenAI = getOpenAIClient(),
+    private readonly signal?: AbortSignal,
+  ) {}
 
   async normalize(input: EvidenceNormalizationInput): Promise<unknown> {
     const response = await this.client.responses.create({
@@ -49,7 +43,7 @@ export class OpenAIEvidenceNormalizationModel
         ),
       },
       max_output_tokens: 2_000,
-    });
+    }, { signal: this.signal });
 
     return JSON.parse(response.output_text) as unknown;
   }

@@ -12,19 +12,20 @@ import { getTavilyDishResearchProvider } from "./tavily-research";
 export function analyzeMenuWithLiveProviders(
   input: AnalyzeMenuInput,
   emitStage: EmitAnalysisStage,
+  signal?: AbortSignal,
 ) {
-  const extractionModel = new OpenAIMenuExtractionModel();
+  const extractionModel = new OpenAIMenuExtractionModel(undefined, signal);
 
   return analyzeMenu(
     input,
     {
       extractMenu: (imageDataUrl) =>
         extractMenuFromImage(imageDataUrl, extractionModel),
-      researchPlanner: new OpenAIResearchPlannerModel(),
+      researchPlanner: new OpenAIResearchPlannerModel(undefined, signal),
       researchProvider: getTavilyDishResearchProvider(),
-      evidenceNormalizer: new OpenAIEvidenceNormalizationModel(),
-      preferenceEvaluator: new OpenAIBatchPreferenceEvaluationModel(),
-      questionGenerator: new OpenAIRestaurantQuestionModel(),
+      evidenceNormalizer: new OpenAIEvidenceNormalizationModel(undefined, signal),
+      preferenceEvaluator: new OpenAIBatchPreferenceEvaluationModel(undefined, signal),
+      questionGenerator: new OpenAIRestaurantQuestionModel(undefined, signal),
     },
     emitStage,
   );

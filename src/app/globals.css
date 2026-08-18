@@ -59,6 +59,11 @@ html {
 body {
   min-height: 100vh;
   margin: 0;
+  background-color: #f5e6c8;
+  background-image: url("/menukita-food-pattern.jpeg");
+  background-repeat: repeat;
+  background-position: top center;
+  background-size: min(760px, 100vw) auto;
   font-family:
     Arial,
     Helvetica,
@@ -161,7 +166,7 @@ body {
     @apply border-border outline-ring/50;
   }
   body {
-    @apply bg-background text-foreground;
+    @apply text-foreground;
   }
   html {
     @apply font-sans;

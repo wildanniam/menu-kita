@@ -54,15 +54,22 @@ Material restaurant questions are generated through `src/lib/questions/restauran
 
 The complete server workflow is coordinated in `src/lib/analysis/analyze-menu.ts` and exposed as a newline-delimited JSON stream at `POST /api/analyze`. It emits only real high-level stages, runs independent dish research concurrently, preserves unresolved evidence when Tavily is unavailable, and validates the final result before streaming it to the client.
 
-The endpoint accepts multipart fields `image` (JPEG, PNG, or WebP; maximum 8 MB) and `profile` (the JSON questionnaire profile). It returns NDJSON stage/result records and contract-valid safe error records. A lightweight per-instance throttle allows five analysis attempts per client per minute; it is intended only for this time-boxed demo.
+The endpoint accepts multipart fields `image` (JPEG, PNG, or WebP; maximum 8 MB), `profile` (the JSON questionnaire profile), and optional `location` (coarse city/region/country only). It returns NDJSON stage/result records and contract-valid safe error records. A lightweight per-instance throttle allows five analysis attempts per client per minute; it is intended only for this time-boxed demo. OpenAI calls use a 45-second timeout with no SDK retries, the whole workflow is cancelled after 150 seconds or when the client disconnects, and logs contain only stage names and elapsed milliseconds.
 
-The scan UI validates the same image limits, parses and validates streamed events incrementally, shows only stages the server actually emits, and exposes safe retry errors. It stores only the final validated result in `sessionStorage`; selected menu images are not persisted. The results route renders the complete member/dish compatibility matrix, provenance, fallbacks, bilingual questions, and uncertainty disclaimer. Start over clears both the questionnaire profile and current result.
+The scan screen can optionally use browser geolocation or a manually typed city to improve regional ingredient research. Browser coordinates are rounded and sent once to the server-side `/api/location/reverse` proxy, which uses OpenStreetMap Nominatim to resolve a coarse place. Coordinates are then discarded: they are not stored, logged, included in the analysis request, or returned in results. Permission denial and provider failure never block scanning. Location-aware Tavily results remain `common_usage` evidence and cannot prove a restaurant's exact recipe.
+
+MenuKita does not perform automatic restaurant halal-certificate lookup in this MVP. Explicit pork, lard, or alcohol evidence remains a hard conflict for a halal profile; locally common but unconfirmed usage requires a targeted restaurant question; sparse evidence remains insufficient information. Missing certification data alone never flags a dish.
+
+The scan UI validates the same image limits, parses and validates streamed events incrementally, shows only stages the server actually emits, and exposes safe retry errors. It stores only the final validated result in `sessionStorage`; selected menu images are not persisted. The results route presents the validated matrix through a current-user-first member switcher plus a compact `All` overview. Each member view keeps stated likes, dislikes, spice tolerance, best option, scoped restaurant questions, status, provenance, and uncertainty details together without rendering the entire expanded matrix at once. Start over clears the questionnaire profile, joined group, and current result.
+
+The application shell uses `public/menukita-logo-transparent.png` for the supplied transparent brand lockup and `public/menukita-food-pattern.jpeg` as a repeating, non-stretched page background. Preferences, Group, Scan, and Results share the same responsive patterned shell, translucent route header, and high-opacity cream content surfaces for readable contrast.
 
 ## Locked prototype scope
 
 - English, responsive group-only web experience
-- Browser-stored questionnaire profile for the current user
+- Browser-stored questionnaire profile and explicit preset-group selection for the current user
 - Existing demo group with source-controlled member profiles
+- Optional ephemeral coarse location for regional ingredient research
 - Menu image understanding with `gpt-4o-mini`; no separate OCR service
 - Bounded agentic research with Tavily
 - Direct TypeScript orchestration with OpenAI SDK, Tavily SDK, and Zod; no LangChain
@@ -79,6 +86,7 @@ Read these in order before planning or implementation:
 3. [`openspec/changes/build-menukita-group-demo/specs/`](./openspec/changes/build-menukita-group-demo/specs/)
 4. [`openspec/changes/build-menukita-group-demo/design.md`](./openspec/changes/build-menukita-group-demo/design.md)
 5. [`openspec/changes/build-menukita-group-demo/tasks.md`](./openspec/changes/build-menukita-group-demo/tasks.md)
+6. [`openspec/changes/add-location-halal-context/`](./openspec/changes/add-location-halal-context/) for the newer location-aware research decision
 
 The active OpenSpec change is authoritative if older exploratory context conflicts with it.
 
@@ -129,7 +137,7 @@ The full normative policy is defined by [`AGENTS.md`](./AGENTS.md) and the [`ope
 | Schemas, OpenAI/Tavily orchestration, and compatibility rules | Wildan | 1.2–1.3, 3.2–5.4 |
 | Exact menu-image acceptance and authorized deployment | Shared | 7.5–7.6 |
 
-All implementation tasks are complete except exact primary/backup menu-image acceptance and an explicitly authorized deployment. Coordinate any further contract or scope changes through OpenSpec before editing dependent code.
+The core journey, agent workflow, and optional location-aware research are implemented. Remaining release inputs are exact primary/backup menu-image acceptance and an explicitly authorized deployment. Coordinate any further contract or scope changes through OpenSpec before editing dependent code.
 
 ## Secrets
 

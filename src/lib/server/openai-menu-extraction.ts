@@ -8,8 +8,8 @@ import {
   type MenuExtractionModel,
   type MenuExtractionRequest,
 } from "../ai";
-import { getServerEnv } from "../env";
 import { menuExtractionSchema } from "../schemas";
+import { getOpenAIClient } from "./openai-client";
 
 const MENU_MODEL = "gpt-4o-mini";
 
@@ -26,16 +26,6 @@ Rules:
 - Never invent missing text, ingredients, prices, or restaurant claims.
 - Evidence created during extraction must use type menu_listed, sourceTitle Uploaded menu, a null sourceUrl, and restaurantConfirmed false.`;
 
-let cachedClient: OpenAI | undefined;
-
-function getOpenAIClient(): OpenAI {
-  if (!cachedClient) {
-    cachedClient = new OpenAI({ apiKey: getServerEnv().OPENAI_API_KEY });
-  }
-
-  return cachedClient;
-}
-
 function requestMessage(request: MenuExtractionRequest): string {
   if (request.attempt === "initial") {
     return "Extract every readable dish from this menu image. Mark unclear text instead of guessing.";
@@ -46,7 +36,10 @@ function requestMessage(request: MenuExtractionRequest): string {
 }
 
 export class OpenAIMenuExtractionModel implements MenuExtractionModel {
-  constructor(private readonly client: OpenAI = getOpenAIClient()) {}
+  constructor(
+    private readonly client: OpenAI = getOpenAIClient(),
+    private readonly signal?: AbortSignal,
+  ) {}
 
   async generate(request: MenuExtractionRequest): Promise<string> {
     const response = await this.client.responses.create({
@@ -70,7 +63,7 @@ export class OpenAIMenuExtractionModel implements MenuExtractionModel {
         format: zodTextFormat(menuExtractionSchema, "menu_extraction"),
       },
       max_output_tokens: 4_000,
-    });
+    }, { signal: this.signal });
 
     return response.output_text;
   }

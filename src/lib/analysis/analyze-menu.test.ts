@@ -118,11 +118,51 @@ describe("analyzeMenu", () => {
       sourceUrl: "https://example.com/curry",
       restaurantConfirmed: false,
     });
+    expect(result.compatibility[0].status).toBe("needs_confirmation");
     expect(result.compatibility).toHaveLength(1);
     expect(result.restaurantQuestions).toHaveLength(1);
     expect(result.recommendations.bestForEveryone?.questionIds).toEqual([
       "question-kari-sayur-1",
     ]);
+  });
+
+  it("passes location into material research while retaining common-usage provenance", async () => {
+    const researchProvider = {
+      search: vi.fn().mockResolvedValue({
+        status: "success" as const,
+        dishId: "kari-sayur",
+        query: "vegetable curry common ingredients in Yogyakarta, Indonesia",
+        sources: [
+          {
+            title: "Local culinary reference",
+            url: "https://example.com/curry",
+            snippet: "Some local vegetable curries use fish sauce.",
+          },
+        ],
+      }),
+    };
+    const result = await analyzeMenu(
+      {
+        imageDataUrl: "data:image/png;base64,abc",
+        profiles,
+        location: {
+          source: "manual",
+          city: "Yogyakarta",
+          region: null,
+          country: "Indonesia",
+          countryCode: "ID",
+        },
+      },
+      dependencies({ researchProvider }),
+    );
+
+    expect(researchProvider.search).toHaveBeenCalledWith(
+      expect.objectContaining({ query: expect.stringContaining("Yogyakarta") }),
+    );
+    expect(result.menu.dishes[0].evidence[0]).toMatchObject({
+      type: "common_usage",
+      restaurantConfirmed: false,
+    });
   });
 
   it("omits the research stage when no dish needs research", async () => {

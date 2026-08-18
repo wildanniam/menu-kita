@@ -19,12 +19,12 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
     <html lang="en" className={cn("font-sans", geist.variable)}>
       <body className={appFont.className}>
         <Image
-          src="/menukita-logo.jpg"
+          src="/menukita-logo-transparent.png"
           alt="MenuKita"
-          width={160}
-          height={120}
+          width={600}
+          height={295}
           priority
-          className="fixed top-3 left-3 z-50 h-10 w-auto rounded-lg shadow-md sm:h-12"
+          className="pointer-events-none fixed left-3 top-3 z-50 h-11 w-auto drop-shadow-[0_5px_10px_rgba(80,35,10,0.2)] sm:left-5 sm:top-4 sm:h-14"
         />
         {children}
       </body>

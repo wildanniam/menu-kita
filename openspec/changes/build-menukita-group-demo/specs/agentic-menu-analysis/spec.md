@@ -7,6 +7,10 @@ The system SHALL use a multimodal model to detect the menu language and extract 
 - **WHEN** the user submits a clear menu image
 - **THEN** the system returns a normalized dish list while preserving original-language names and visibly listed facts
 
+#### Scenario: Structured output schema is submitted to the model
+- **WHEN** the server requests structured menu extraction from GPT-4o mini
+- **THEN** the generated JSON Schema uses only response-format keywords supported by the provider while runtime validation still enforces valid HTTP source URLs
+
 #### Scenario: Unreadable menu content
 - **WHEN** part of the image cannot be read reliably
 - **THEN** the system marks the affected content as unclear rather than inventing text
@@ -44,6 +48,14 @@ The workflow SHALL preserve useful extraction results when research fails, times
 - **WHEN** Tavily fails or exceeds its timeout
 - **THEN** the workflow continues with available evidence and marks affected decisions as needing confirmation or insufficient information
 
+#### Scenario: Analysis exceeds its time budget
+- **WHEN** model or provider work exceeds the configured whole-analysis deadline
+- **THEN** the workflow stops outstanding work and returns a safe retryable timeout error without exposing provider details
+
+#### Scenario: Client cancels analysis
+- **WHEN** the active request is aborted because the user navigates away or cancels
+- **THEN** the workflow propagates cancellation to provider calls and does not persist a partial result
+
 ### Requirement: Observable workflow stages
 The interface SHALL report actual high-level analysis stages without exposing hidden model reasoning.
 
@@ -51,3 +63,6 @@ The interface SHALL report actual high-level analysis stages without exposing hi
 - **WHEN** a menu is being analyzed
 - **THEN** the interface updates progress across menu reading, evidence checking, bounded research, member matching, and recommendation preparation
 
+#### Scenario: Provider or final validation fails
+- **WHEN** analysis stops unexpectedly
+- **THEN** server diagnostics record only the failed stage, elapsed time, provider error classification, and schema issue paths while excluding menu, profile, query, and result content

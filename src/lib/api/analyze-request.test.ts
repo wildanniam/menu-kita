@@ -21,10 +21,12 @@ const profile = {
 function multipartRequest(options: {
   image?: File;
   profile?: string;
+  location?: string;
 } = {}): Request {
   const form = new FormData();
   if (options.image !== undefined) form.set("image", options.image);
   if (options.profile !== undefined) form.set("profile", options.profile);
+  if (options.location !== undefined) form.set("location", options.location);
   return new Request("http://localhost/api/analyze", {
     method: "POST",
     body: form,
@@ -44,6 +46,42 @@ describe("parseAnalyzeRequest", () => {
 
     expect(parsed.profile).toMatchObject({ id: "wildan", name: "Wildan" });
     expect(parsed.imageDataUrl).toBe("data:image/png;base64,AQID");
+    expect(parsed.location).toBeNull();
+  });
+
+  it("accepts bounded optional place context without coordinates", async () => {
+    const request = multipartRequest({
+      image: new File(["menu"], "menu.jpg", { type: "image/jpeg" }),
+      profile: JSON.stringify(profile),
+      location: JSON.stringify({
+        source: "browser",
+        city: "Jakarta",
+        region: "DKI Jakarta",
+        country: "Indonesia",
+        countryCode: "ID",
+      }),
+    });
+
+    await expect(parseAnalyzeRequest(request)).resolves.toMatchObject({
+      location: {
+        source: "browser",
+        city: "Jakarta",
+        region: "DKI Jakarta",
+      },
+    });
+  });
+
+  it("rejects malformed or coordinate-bearing location context", async () => {
+    const request = multipartRequest({
+      image: new File(["menu"], "menu.jpg", { type: "image/jpeg" }),
+      profile: JSON.stringify(profile),
+      location: JSON.stringify({ source: "browser", latitude: -6.2 }),
+    });
+
+    await expect(parseAnalyzeRequest(request)).rejects.toMatchObject({
+      code: "INVALID_CONTEXT",
+      status: 400,
+    } satisfies Partial<AnalyzeRequestError>);
   });
 
   it("rejects unsupported image types without reading model providers", async () => {

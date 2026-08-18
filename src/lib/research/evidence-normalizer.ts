@@ -1,10 +1,16 @@
 import { z } from "zod";
 
-import { dishSchema, evidenceSchema, type Dish, type Evidence } from "../schemas";
+import {
+  dishSchema,
+  evidenceSchema,
+  httpUrlSchema,
+  type Dish,
+  type Evidence,
+} from "../schemas";
 import type { DishResearchResult } from "./dish-research";
 
 const normalizedSourceDecisionSchema = z.object({
-  sourceUrl: z.url(),
+  sourceUrl: httpUrlSchema,
   relevant: z.boolean(),
   claims: z.array(z.string().trim().min(1).max(500)).max(3),
 });

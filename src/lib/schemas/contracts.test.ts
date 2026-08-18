@@ -1,14 +1,19 @@
 import { describe, expect, it } from "vitest";
+import { zodTextFormat } from "openai/helpers/zod";
 
 import {
   analysisStreamEventSchema,
   analysisResultSchema,
   evidenceSchema,
   foodProfileSchema,
+  locationContextSchema,
+  menuExtractionSchema,
+  reverseGeocodeRequestSchema,
   memberDishCompatibilitySchema,
 } from ".";
 import { buildDemoGroup, demoCurrentUser, presetGroupMembers } from "../data";
 import { demoAnalysisResult, demoAnalysisStream } from "../fixtures";
+import { evidenceNormalizationOutputSchema } from "../research";
 
 describe("MenuKita shared contracts", () => {
   it("parses a normalized food profile", () => {
@@ -47,6 +52,51 @@ describe("MenuKita shared contracts", () => {
     });
 
     expect(result.success).toBe(false);
+    expect(
+      evidenceSchema.safeParse({
+        id: "evidence-2",
+        claim: "Peanut sauce is commonly used.",
+        type: "common_usage",
+        sourceTitle: "Example source",
+        sourceUrl: "ftp://example.com/source",
+      }).success,
+    ).toBe(false);
+  });
+
+  it("generates OpenAI-compatible structured-output schemas without uri format", () => {
+    const formats = [
+      zodTextFormat(menuExtractionSchema, "menu_extraction"),
+      zodTextFormat(evidenceNormalizationOutputSchema, "research_evidence"),
+    ];
+
+    expect(JSON.stringify(formats)).not.toContain('"format":"uri"');
+    expect(JSON.stringify(formats)).toContain('"pattern":"^https?');
+  });
+
+  it("accepts place-only context and rejects empty location data", () => {
+    expect(
+      locationContextSchema.safeParse({
+        source: "browser",
+        city: "Jakarta",
+        region: "DKI Jakarta",
+        country: "Indonesia",
+        countryCode: "id",
+      }).success,
+    ).toBe(true);
+    expect(
+      locationContextSchema.safeParse({ source: "manual" }).success,
+    ).toBe(false);
+  });
+
+  it("bounds coordinates only at the reverse-geocode boundary", () => {
+    expect(
+      reverseGeocodeRequestSchema.safeParse({ latitude: -6.2, longitude: 106.82 })
+        .success,
+    ).toBe(true);
+    expect(
+      reverseGeocodeRequestSchema.safeParse({ latitude: -100, longitude: 106.82 })
+        .success,
+    ).toBe(false);
   });
 
   it("parses a minimal complete analysis result", () => {

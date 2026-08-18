@@ -118,4 +118,43 @@ describe("bounded research planner", () => {
     ]);
     expect(plan.items.every(({ queries }) => queries.length === 2)).toBe(true);
   });
+
+  it("adds coarse place context to candidates and fallback queries", async () => {
+    const model: ResearchPlannerModel = {
+      decide: vi.fn().mockRejectedValue(new Error("model unavailable")),
+    };
+
+    const plan = await createResearchPlan(
+      demoAnalysisResult.menu,
+      demoGroup.members,
+      model,
+      {
+        source: "browser",
+        city: "Yogyakarta",
+        region: "Special Region of Yogyakarta",
+        country: "Indonesia",
+        countryCode: "ID",
+      },
+    );
+
+    expect(plan.items[0].queries.every((query) => query.includes("Yogyakarta")))
+      .toBe(true);
+    expect(vi.mocked(model.decide).mock.calls[0][0][0]).toMatchObject({
+      locationLabel: "Yogyakarta, Special Region of Yogyakarta, Indonesia",
+    });
+  });
+
+  it("keeps the original query shape when location is skipped", async () => {
+    const model: ResearchPlannerModel = {
+      decide: vi.fn().mockRejectedValue(new Error("model unavailable")),
+    };
+
+    const plan = await createResearchPlan(
+      demoAnalysisResult.menu,
+      demoGroup.members,
+      model,
+    );
+
+    expect(plan.items[0].queries[0]).not.toContain(" in ");
+  });
 });

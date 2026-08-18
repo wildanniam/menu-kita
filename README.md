@@ -44,6 +44,8 @@ The research planner in `src/lib/research/research-planner.ts` offers GPT-4o min
 
 Research evidence normalization lives in `src/lib/research/evidence-normalizer.ts`. It accepts claims only for exact Tavily source URLs, labels them as common usage, preserves menu-listed evidence, and emits unresolved evidence when research or normalization fails.
 
+Preference evaluation in `src/lib/compatibility/preferences.ts` receives no dietary restrictions, validates every explanation basis, and combines its score with the independently computed hard status without allowing the score to change that status.
+
 ## Locked prototype scope
 
 - English, responsive group-only web experience

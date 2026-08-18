@@ -20,6 +20,7 @@
 - [x] 2.2 **[Moomina/UI]** Build the English onboarding questionnaire with validation and browser persistence
 - [x] 2.3 **[Moomina/UI]** Build existing-group selection and a group overview combining the current user with preset members
 - [ ] 2.4 **[Moomina/UI]** Add navigation, reset, and reload behavior for the complete pre-scan journey
+  - The root entry route now redirects to onboarding instead of exposing the obsolete starter placeholder; reset and full reload behavior remain open.
 
 ## 3. Menu extraction
 

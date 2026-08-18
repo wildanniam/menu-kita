@@ -32,7 +32,7 @@ npm run build
 
 Shared Zod schemas and inferred TypeScript types live in `src/lib/schemas/`. UI work should use these contracts or typed fixtures derived from them.
 
-The replaceable five-person group lives in `src/lib/data/demo-group.ts`. Contract-valid menu, compatibility, recommendation, question, and progress fixtures live in `src/lib/fixtures/demo-analysis.ts`, so UI work can proceed independently of the live analysis route.
+The replaceable five-person group lives in `src/lib/data/demo-group.ts`. Contract-valid menu, compatibility, recommendation, question, and progress fixtures live in `src/lib/fixtures/demo-analysis.ts` for deterministic tests and isolated UI work; the live product journey does not use them as analysis output.
 
 The server-only GPT-4o mini adapter lives in `src/lib/server/openai-menu-extraction.ts`. Its validation and single repair-attempt workflow is isolated in `src/lib/ai/menu-extraction.ts` so it can be tested without making API calls.
 
@@ -55,6 +55,8 @@ Material restaurant questions are generated through `src/lib/questions/restauran
 The complete server workflow is coordinated in `src/lib/analysis/analyze-menu.ts` and exposed as a newline-delimited JSON stream at `POST /api/analyze`. It emits only real high-level stages, runs independent dish research concurrently, preserves unresolved evidence when Tavily is unavailable, and validates the final result before streaming it to the client.
 
 The endpoint accepts multipart fields `image` (JPEG, PNG, or WebP; maximum 8 MB) and `profile` (the JSON questionnaire profile). It returns NDJSON stage/result records and contract-valid safe error records. A lightweight per-instance throttle allows five analysis attempts per client per minute; it is intended only for this time-boxed demo.
+
+The scan UI validates the same image limits, parses and validates streamed events incrementally, shows only stages the server actually emits, and exposes safe retry errors. It stores only the final validated result in `sessionStorage`; selected menu images are not persisted. The results route renders the complete member/dish compatibility matrix, provenance, fallbacks, bilingual questions, and uncertainty disclaimer. Start over clears both the questionnaire profile and current result.
 
 ## Locked prototype scope
 
@@ -115,8 +117,8 @@ The full normative policy is defined by [`AGENTS.md`](./AGENTS.md) and the [`ope
 
 ## Current collaboration inputs
 
-- Moomina's onboarding, group, upload, navigation, and partial fixture-backed results UI are merged; live API progress/results integration and the final presentation pass remain.
-- The five-member demo group is approved; Wildan will provide primary/backup demo menu images and the team can add final avatar assets later.
+- Moomina's visual system and the complete onboarding, group, upload, progress, and results journey are integrated with the live analysis contract.
+- The five-member demo group is approved. Wildan still needs to provide the exact primary and backup demo menu images for provider-backed acceptance; final avatar assets remain optional presentation polish.
 - The implementation task list deliberately isolates those inputs from domain and agent architecture.
 
 ### Suggested parallel ownership
@@ -125,9 +127,9 @@ The full normative policy is defined by [`AGENTS.md`](./AGENTS.md) and the [`ope
 | --- | --- | --- |
 | Brand system, responsive UI, and interaction states | Moomina | 2.2–2.4, 3.1, 6.1–6.4, 7.1 |
 | Schemas, OpenAI/Tavily orchestration, and compatibility rules | Wildan | 1.2–1.3, 3.2–5.4 |
-| Integration, verification, and demo preparation | Shared | 7.2–7.5 |
+| Exact menu-image acceptance and authorized deployment | Shared | 7.5–7.6 |
 
-The UI can be developed against typed fixtures that match the shared Zod contracts. Coordinate changes to those contracts before either side updates dependent code.
+All implementation tasks are complete except exact primary/backup menu-image acceptance and an explicitly authorized deployment. Coordinate any further contract or scope changes through OpenSpec before editing dependent code.
 
 ## Secrets
 

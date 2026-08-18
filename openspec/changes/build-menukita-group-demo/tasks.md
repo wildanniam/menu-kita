@@ -19,8 +19,8 @@
 - [x] 2.1 **[Wildan/Core]** Add the replaceable preset group data module using the approved five-person group
 - [x] 2.2 **[Moomina/UI]** Build the English onboarding questionnaire with validation and browser persistence
 - [x] 2.3 **[Moomina/UI]** Build existing-group selection and a group overview combining the current user with preset members
-- [ ] 2.4 **[Moomina/UI]** Add navigation, reset, and reload behavior for the complete pre-scan journey
-  - The root entry route now redirects to onboarding instead of exposing the obsolete starter placeholder; reset and full reload behavior remain open.
+- [x] 2.4 **[Moomina/UI]** Add navigation, reset, and reload behavior for the complete pre-scan journey
+  - Flow navigation now respects saved profile/result state, reload restores validated browser state, and Start over clears the profile and analysis before returning to onboarding.
 
 ## 3. Menu extraction
 
@@ -44,18 +44,19 @@
 
 ## 6. Results and restaurant questions
 
-- [ ] 6.1 **[Moomina/UI]** Build responsive analysis progress using only actual workflow stages
-- [ ] 6.2 **[Moomina/UI]** Build the group recommendation summary and responsive compatibility matrix with expandable evidence
+- [x] 6.1 **[Moomina/UI]** Build responsive analysis progress using only actual workflow stages
+- [x] 6.2 **[Moomina/UI]** Build the group recommendation summary and responsive compatibility matrix with expandable evidence
 - [x] 6.3 **[Wildan/Core]** Generate material confirmation questions in English and the detected menu language
-- [ ] 6.4 **[Moomina/UI]** Build the question display, local-language copy action, uncertainty messaging, and safety disclaimer
+- [x] 6.4 **[Moomina/UI]** Build the question display, local-language copy action, uncertainty messaging, and safety disclaimer
+- [x] 6.5 **[Shared]** Connect the scan UI to the streamed `/api/analyze` contract, persist the validated result for reload, and remove dummy result transport
 
 ## 7. Presentation and verification
 
-- [ ] 7.1 **[Moomina/UI]** Integrate the collaborator-provided visual direction and responsive interaction states without changing domain behavior
+- [x] 7.1 **[Moomina/UI]** Integrate the collaborator-provided visual direction and responsive interaction states without changing domain behavior
 - [x] 7.2 **[Wildan/Core]** Add API input limits, safe error responses, basic request throttling, and checks preventing secret exposure
 - [x] 7.3 **[Wildan/Core]** Add integration tests for questionnaire-to-group flow and agent fallback behavior using deterministic fixtures
-- [ ] 7.4 **[Wildan/Core]** Run lint, type checks, tests, production build, and browser checks across mobile and desktop widths
-  - Post-merge verification passes: lint, typecheck, 59 automated tests, production build, and the fixture-backed onboarding → group → upload → results journey at 390×844 and 1440×900 with no browser console errors.
-  - Final live-analysis browser verification remains open until the streamed API is integrated and tasks 2.4, 6.1–6.2, 6.4, and 7.1 are complete.
+- [x] 7.4 **[Wildan/Core]** Run lint, type checks, tests, production build, and browser checks across mobile and desktop widths
+  - Final verification passes: lint, typecheck, 64 automated tests, production build, and the streamed-contract onboarding → group → upload → results journey at 390×844 and 1440×900 with no browser console errors.
+  - Browser verification covered guarded navigation, analysis completion, expandable evidence, local-language copy, result persistence after reload, and Start over clearing both stored states. Exact provider-backed demo-image acceptance remains task 7.5.
 - [ ] 7.5 **[Shared]** Verify the exact primary and backup menu images with the approved group profiles and document the live demo sequence and fallback plan
 - [ ] 7.6 **[Shared]** After explicit authorization, configure Vercel environment variables, deploy, and smoke-test the production demo

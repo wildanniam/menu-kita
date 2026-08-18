@@ -9,7 +9,7 @@ export default function ResultsPage() {
       style={{ backgroundColor: "#F5E6C8" }}
       className="flex min-h-screen w-full justify-center px-4 py-10 sm:px-6 sm:py-16"
     >
-      <div className="flex w-full max-w-xl flex-col gap-6 sm:gap-8">
+      <div className="flex w-full max-w-5xl flex-col gap-6 sm:gap-8">
         <div className="flex flex-col gap-3">
           <FlowNav current="/results" />
           <div className="flex gap-1.5" aria-hidden="true">
@@ -25,7 +25,7 @@ export default function ResultsPage() {
             style={{ color: "#7C2D12" }}
             className="text-3xl font-extrabold sm:text-4xl"
           >
-            Who Can Have What
+            Your Group&apos;s Menu Match
           </h1>
         </div>
         <ResultsView />

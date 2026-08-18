@@ -6,7 +6,15 @@ import { useRouter } from "next/navigation";
 import { useEffect, useRef, useState } from "react";
 
 import { Button } from "@/components/ui/button";
+import {
+  AnalysisClientError,
+  analyzeMenuImage,
+  clearAnalysisResult,
+  saveAnalysisResult,
+} from "@/lib/client";
+import type { AnalysisStageEvent } from "@/lib/schemas";
 import { useCurrentUserProfile } from "@/lib/storage/profile-storage";
+import { AnalysisProgress } from "./AnalysisProgress";
 
 const PALETTE = {
   rustySpice: "#AD390B",
@@ -17,6 +25,7 @@ const PALETTE = {
 };
 
 const MAX_FILE_SIZE_BYTES = 8 * 1024 * 1024;
+const ALLOWED_IMAGE_TYPES = ["image/jpeg", "image/png", "image/webp"];
 
 interface SelectedImage {
   file: File;
@@ -24,8 +33,8 @@ interface SelectedImage {
 }
 
 function validateFile(file: File): string | null {
-  if (!file.type.startsWith("image/")) {
-    return "Please choose an image file.";
+  if (!ALLOWED_IMAGE_TYPES.includes(file.type)) {
+    return "Please choose a JPEG, PNG, or WebP image.";
   }
   if (file.size > MAX_FILE_SIZE_BYTES) {
     return "That image is too large. Please choose one under 8 MB.";
@@ -139,10 +148,14 @@ export function MenuScanForm() {
   const [image, setImage] = useState<SelectedImage | null>(null);
   const [cameraOpen, setCameraOpen] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const [isAnalyzing, setIsAnalyzing] = useState(false);
+  const [stageEvents, setStageEvents] = useState<AnalysisStageEvent[]>([]);
   const fileInputRef = useRef<HTMLInputElement>(null);
+  const abortControllerRef = useRef<AbortController | null>(null);
 
   useEffect(() => {
     return () => {
+      abortControllerRef.current?.abort();
       if (image) {
         URL.revokeObjectURL(image.previewUrl);
       }
@@ -160,6 +173,8 @@ export function MenuScanForm() {
       URL.revokeObjectURL(image.previewUrl);
     }
     setError(null);
+    setStageEvents([]);
+    clearAnalysisResult();
     setCameraOpen(false);
     setImage({ file, previewUrl: URL.createObjectURL(file) });
   }
@@ -178,6 +193,41 @@ export function MenuScanForm() {
     }
     setImage(null);
     setError(null);
+    setStageEvents([]);
+    clearAnalysisResult();
+  }
+
+  async function handleAnalyze() {
+    if (!image || !profile || isAnalyzing) return;
+
+    const controller = new AbortController();
+    abortControllerRef.current = controller;
+    setError(null);
+    setStageEvents([]);
+    setIsAnalyzing(true);
+    clearAnalysisResult();
+
+    try {
+      const result = await analyzeMenuImage({
+        image: image.file,
+        profile,
+        signal: controller.signal,
+        onStage: (event) => {
+          setStageEvents((current) => [...current, event]);
+        },
+      });
+      saveAnalysisResult(result);
+      router.push("/results");
+    } catch (caught) {
+      setError(
+        caught instanceof AnalysisClientError
+          ? caught.message
+          : "We could not analyze this menu. Please try again.",
+      );
+    } finally {
+      abortControllerRef.current = null;
+      setIsAnalyzing(false);
+    }
   }
 
   if (!profile) {
@@ -209,12 +259,14 @@ export function MenuScanForm() {
       <input
         ref={fileInputRef}
         type="file"
-        accept="image/*"
+        accept="image/jpeg,image/png,image/webp"
         onChange={handleFileChange}
         className="hidden"
       />
 
-      {!image ? (
+      {isAnalyzing ? (
+        <AnalysisProgress events={stageEvents} />
+      ) : !image ? (
         <div
           className="flex flex-col items-center gap-4 rounded-xl border-2 border-dashed bg-white p-8 text-center"
           style={{ borderColor: PALETTE.oliveLeaf }}
@@ -274,7 +326,7 @@ export function MenuScanForm() {
                 type="button"
                 size="icon-lg"
                 aria-label="Scan photo"
-                onClick={() => router.push("/results")}
+                onClick={handleAnalyze}
                 style={{ backgroundColor: PALETTE.oliveLeaf }}
                 className="rounded-full border-transparent text-white hover:opacity-90"
               >
@@ -283,6 +335,17 @@ export function MenuScanForm() {
               <span className="text-xs text-neutral-600">Scan photo</span>
             </div>
           </div>
+          {error && (
+            <div
+              role="alert"
+              className="rounded-xl border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-800"
+            >
+              <p>{error}</p>
+              <p className="mt-1 text-xs text-red-700">
+                Keep this photo to retry, or retake it if the menu is unclear.
+              </p>
+            </div>
+          )}
         </div>
       )}
     </div>

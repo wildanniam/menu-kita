@@ -23,7 +23,7 @@ MenuKita is a greenfield, one-day hackathon prototype for an international audie
 
 ### Application stack
 
-Use Next.js App Router with TypeScript and Tailwind CSS. Keep the application as one deployable unit, use server-only route handlers for external APIs, and use browser storage only for the questionnaire profile. This minimizes infrastructure and matches the intended Vercel deployment. A separate backend and database were rejected because they add no value to the prototype story.
+Use Next.js App Router with TypeScript and Tailwind CSS. Keep the application as one deployable unit, use server-only route handlers for external APIs, and use browser storage only for the questionnaire profile and final validated analysis result. This minimizes infrastructure and matches the intended Vercel deployment. A separate backend and database were rejected because they add no value to the prototype story.
 
 ### Replaceable preset data
 
@@ -87,6 +87,8 @@ Provide source-controlled fixtures that satisfy the shared Zod contracts for pre
 
 Keep the approved group values in one typed data module so replacing restrictions, preferences, or avatars does not change UI or agent logic.
 
+During live integration, keep the selected image only in the scan component, stream validated NDJSON events directly from `/api/analyze`, and save only the final validated analysis result in `sessionStorage`. This allows the results route to survive reloads without persisting menu images or creating a backend store. Reset clears both the questionnaire profile and the current analysis result. Development fixtures remain test inputs and must not be used by the live results route.
+
 ## Development Execution Plan
 
 ### Current baseline
@@ -97,8 +99,9 @@ Keep the approved group values in one typed data module so replacing restriction
 - Structured GPT-4o mini extraction, bounded Tavily research and evidence normalization, deterministic hard-restriction evaluation, batch preference evaluation, recommendation ranking, and bilingual material-question generation are connected through the streamed `/api/analyze` route and unit-tested.
 - The route emits newline-delimited validated stage events only when work actually occurs, followed by one validated result. Independent dishes research concurrently, queries for a single dish remain sequential, and provider failures become unresolved evidence without aborting the scan.
 - Deterministic integration coverage now validates questionnaire normalization into the five-person group and the complete analysis matrix when planning, Tavily, preference, and question providers fail. Provider outages retain known hard conflicts, add unresolved evidence, use local fallbacks, and still produce a contract-valid recommendation result.
-- The merged UI now provides browser-persisted onboarding, the five-member group overview, camera/file selection with preview and retry, shared flow navigation, and a partial fixture-backed results view.
-- The UI does not yet consume the live analysis stream: scan currently navigates to dummy results, analysis progress, expandable evidence, restaurant questions, reset behavior, and deployment remain incomplete.
+- The integrated UI now provides browser-persisted onboarding, the five-member group overview, camera/file selection with preview and retry, guarded flow navigation, and responsive analysis progress driven by validated streamed stage events.
+- The scan route consumes the live `/api/analyze` NDJSON contract and stores only the final validated result in session storage. Results render the group recommendation, complete member/dish matrix, expandable provenance, member fallbacks, bilingual copyable restaurant questions, and explicit safety limits without a dummy runtime result.
+- Reset and reload behavior are verified across the full local journey. Exact primary/backup menu-image acceptance and an explicitly authorized production deployment remain incomplete.
 
 ### Delivery graph
 

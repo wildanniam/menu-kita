@@ -274,7 +274,7 @@ export function MenuScanForm() {
                 type="button"
                 size="icon-lg"
                 aria-label="Scan photo"
-                onClick={() => router.push("/results")}
+                onClick={() => router.push("/analyzing")}
                 style={{ backgroundColor: PALETTE.oliveLeaf }}
                 className="rounded-full border-transparent text-white hover:opacity-90"
               >

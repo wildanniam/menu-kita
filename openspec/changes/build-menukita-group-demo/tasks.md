@@ -43,10 +43,11 @@
 
 ## 6. Results and restaurant questions
 
-- [ ] 6.1 **[Moomina/UI]** Build responsive analysis progress using only actual workflow stages
-- [ ] 6.2 **[Moomina/UI]** Build the group recommendation summary and responsive compatibility matrix with expandable evidence
+- [x] 6.1 **[Moomina/UI]** Build responsive analysis progress using only actual workflow stages
+- [x] 6.2 **[Moomina/UI]** Build the group recommendation summary and responsive compatibility matrix with expandable evidence
 - [ ] 6.3 **[Wildan/Core]** Generate material confirmation questions in English and the detected menu language
 - [ ] 6.4 **[Moomina/UI]** Build the question display, local-language copy action, uncertainty messaging, and safety disclaimer
+  - Question display, uncertainty messaging, and safety disclaimer are built. Copy action currently copies English only - no local-language translation is wired up yet (needs Wildan's real question generation output, not the local placeholder text used here).
 
 ## 7. Presentation and verification
 

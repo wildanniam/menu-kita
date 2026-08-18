@@ -37,10 +37,10 @@ const ALL_TAB_VALUE = "all";
 
 function DishRow({ dish, status }: { dish: Dish; status: DietaryStatus }) {
   return (
-    <li className="flex items-center justify-between gap-3 rounded-lg border border-neutral-200 bg-white px-4 py-3">
-      <span className="font-medium text-neutral-900">{dish.originalName}</span>
-      <span className={`text-sm font-semibold ${STATUS_TEXT_CLASS[status]}`}>
-        {STATUS_LABEL[status]}
+    <li className="rounded-lg border border-neutral-200 bg-white px-4 py-3">
+      <span className={`font-medium ${STATUS_TEXT_CLASS[status]}`}>
+        {dish.originalName}
+        <span className="sr-only"> &mdash; {STATUS_LABEL[status]}</span>
       </span>
     </li>
   );

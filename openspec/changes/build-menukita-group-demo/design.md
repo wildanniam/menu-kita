@@ -96,6 +96,7 @@ Keep the approved group values in one typed data module so replacing restriction
 - Server environment validation, shared Zod contracts, typed fixtures, and preset group data are implemented.
 - Structured GPT-4o mini extraction, bounded Tavily research and evidence normalization, deterministic hard-restriction evaluation, batch preference evaluation, recommendation ranking, and bilingual material-question generation are connected through the streamed `/api/analyze` route and unit-tested.
 - The route emits newline-delimited validated stage events only when work actually occurs, followed by one validated result. Independent dishes research concurrently, queries for a single dish remain sequential, and provider failures become unresolved evidence without aborting the scan.
+- Deterministic integration coverage now validates questionnaire normalization into the five-person group and the complete analysis matrix when planning, Tavily, preference, and question providers fail. Provider outages retain known hard conflicts, add unresolved evidence, use local fallbacks, and still produce a contract-valid recommendation result.
 - No onboarding, group flow, upload flow, live analysis route, results UI, or deployment exists yet.
 
 ### Delivery graph

@@ -17,13 +17,13 @@
 ## 2. Profile and group journey
 
 - [x] 2.1 **[Wildan/Core]** Add the replaceable preset group data module using the approved five-person group
-- [ ] 2.2 **[Moomina/UI]** Build the English onboarding questionnaire with validation and browser persistence
-- [ ] 2.3 **[Moomina/UI]** Build existing-group selection and a group overview combining the current user with preset members
+- [x] 2.2 **[Moomina/UI]** Build the English onboarding questionnaire with validation and browser persistence
+- [x] 2.3 **[Moomina/UI]** Build existing-group selection and a group overview combining the current user with preset members
 - [ ] 2.4 **[Moomina/UI]** Add navigation, reset, and reload behavior for the complete pre-scan journey
 
 ## 3. Menu extraction
 
-- [ ] 3.1 **[Moomina/UI]** Build menu image selection, validation, preview, removal, and retry states
+- [x] 3.1 **[Moomina/UI]** Build menu image selection, validation, preview, removal, and retry states
 - [x] 3.2 **[Wildan/Core]** Implement the server-only OpenAI adapter and structured GPT-4o mini menu extraction
 - [x] 3.3 **[Wildan/Core]** Validate extraction output, preserve unreadable fields, and add one controlled schema-repair attempt
 

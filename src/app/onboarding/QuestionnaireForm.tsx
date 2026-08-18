@@ -112,14 +112,7 @@ function DietaryQuickAddChips({
   );
 }
 
-function slugifyName(name: string): string {
-  const slug = name
-    .trim()
-    .toLowerCase()
-    .replace(/[^a-z0-9]+/g, "-")
-    .replace(/(^-|-$)/g, "");
-  return slug.length > 0 ? slug : "current-user";
-}
+const CURRENT_USER_ID = "current-user";
 
 function TagListInput({
   label,
@@ -278,7 +271,7 @@ function QuestionnaireFormInner({
     }
 
     const profile: FoodProfile = foodProfileSchema.parse({
-      id: savedProfile?.id ?? slugifyName(name),
+      id: CURRENT_USER_ID,
       name: name.trim(),
       isCurrentUser: true,
       dietaryRequirements: tagLists.dietaryRequirements,

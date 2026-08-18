@@ -1,4 +1,4 @@
-import { BackLink } from "@/components/BackLink";
+import { FlowNav } from "@/components/FlowNav";
 import { MenuScanForm } from "./MenuScanForm";
 
 const DECORATIVE_DOTS = ["#AD390B", "#385610", "#D97706", "#7C2D12"];
@@ -11,7 +11,7 @@ export default function ScanPage() {
     >
       <div className="flex w-full max-w-xl flex-col gap-6 sm:gap-8">
         <div className="flex flex-col gap-3">
-          <BackLink href="/group" label="Back to group" />
+          <FlowNav current="/scan" />
           <div className="flex gap-1.5" aria-hidden="true">
             {DECORATIVE_DOTS.map((color) => (
               <span

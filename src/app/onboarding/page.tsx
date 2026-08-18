@@ -1,3 +1,4 @@
+import { FlowNav } from "@/components/FlowNav";
 import { QuestionnaireForm } from "./QuestionnaireForm";
 
 const DECORATIVE_DOTS = ["#AD390B", "#385610", "#D97706", "#7C2D12"];
@@ -10,6 +11,7 @@ export default function OnboardingPage() {
     >
       <div className="flex w-full max-w-xl flex-col gap-6 sm:gap-8">
         <div className="flex flex-col gap-3">
+          <FlowNav current="/onboarding" />
           <div className="flex gap-1.5" aria-hidden="true">
             {DECORATIVE_DOTS.map((color) => (
               <span

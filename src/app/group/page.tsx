@@ -1,4 +1,4 @@
-import { BackLink } from "@/components/BackLink";
+import { FlowNav } from "@/components/FlowNav";
 import { GroupOverview } from "./GroupOverview";
 
 const DECORATIVE_DOTS = ["#AD390B", "#385610", "#D97706", "#7C2D12"];
@@ -11,7 +11,7 @@ export default function GroupPage() {
     >
       <div className="flex w-full max-w-2xl flex-col gap-6 sm:gap-8">
         <div className="flex flex-col gap-3">
-          <BackLink href="/onboarding" label="Back to preferences" />
+          <FlowNav current="/group" />
           <div className="flex gap-1.5" aria-hidden="true">
             {DECORATIVE_DOTS.map((color) => (
               <span

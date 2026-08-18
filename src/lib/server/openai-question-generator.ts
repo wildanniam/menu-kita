@@ -18,7 +18,10 @@ Rules:
 - Keep the English question direct and easy to say aloud.
 - When the menu language is not English, provide a natural translation in that exact language.
 - When the menu language is English, set localized to null.
-- Preserve dish ids and use only supplied member ids.
+- Return one question per supplied candidate identity.
+- Preserve each candidate id, dish id, and member id exactly.
+- Personalize the wording with the supplied member name and only that candidate's restriction context.
+- Never merge another member's restrictions into the question.
 - Do not claim that a general recipe is the restaurant's exact recipe.`;
 
 export class OpenAIRestaurantQuestionModel implements RestaurantQuestionModel {

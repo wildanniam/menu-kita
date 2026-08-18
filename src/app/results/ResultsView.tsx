@@ -23,8 +23,10 @@ import {
   ALL_MEMBERS_SELECTION,
   getMemberCompatibility,
   getMemberRecommendation,
+  getQuestionMemberNames,
   getQuestionsForSelection,
   getRowsByDish,
+  shouldShowRestaurantQuestions,
   type ResultSelection,
 } from "@/lib/results/result-selectors";
 import type {
@@ -440,9 +442,11 @@ function MemberOverview({
 function RestaurantQuestions({
   questions,
   memberName,
+  profiles,
 }: {
   questions: RestaurantQuestion[];
   memberName?: string;
+  profiles: FoodProfile[];
 }) {
   const [copiedId, setCopiedId] = useState<string | null>(null);
 
@@ -473,14 +477,16 @@ function RestaurantQuestions({
         </div>
       </div>
 
-      {questions.length === 0 ? (
-        <div className="mt-4 rounded-2xl border border-green-200 bg-green-50 px-4 py-3 text-sm text-green-900">
-          No additional restaurant confirmations were generated for {memberName ?? "this group"}.
-        </div>
-      ) : (
-        <div className="mt-5 grid gap-3 lg:grid-cols-2">
-          {questions.map((question) => (
+      <div className="mt-5 grid gap-3 lg:grid-cols-2">
+        {questions.map((question) => {
+          const affectedMembers = getQuestionMemberNames(question, profiles);
+          return (
             <article key={question.id} className="rounded-2xl border border-[#D97706]/20 bg-white p-4">
+              {!memberName && affectedMembers.length > 0 && (
+                <p className="mb-2 text-xs font-extrabold uppercase tracking-[0.14em] text-[#AD390B]">
+                  For {affectedMembers.join(", ")}
+                </p>
+              )}
               <p className="font-bold leading-6 text-neutral-900">{question.english}</p>
               {question.localized && (
                 <div className="mt-3 rounded-xl bg-[#F5E6C8]/65 px-3 py-2.5">
@@ -503,9 +509,9 @@ function RestaurantQuestions({
                 {copiedId === question.id ? "Copied" : "Copy question"}
               </button>
             </article>
-          ))}
-        </div>
-      )}
+          );
+        })}
+      </div>
     </section>
   );
 }
@@ -617,7 +623,13 @@ function ResultExplorer({
                 })}
               </div>
             </section>
-            <RestaurantQuestions questions={questions} memberName={selectedMember.name} />
+            {shouldShowRestaurantQuestions(questions) && (
+              <RestaurantQuestions
+                questions={questions}
+                memberName={selectedMember.name}
+                profiles={group.members}
+              />
+            )}
           </>
         ) : (
           <>
@@ -645,7 +657,9 @@ function ResultExplorer({
                 ))}
               </div>
             </section>
-            <RestaurantQuestions questions={questions} />
+            {shouldShowRestaurantQuestions(questions) && (
+              <RestaurantQuestions questions={questions} profiles={group.members} />
+            )}
           </>
         )}
         <SafetyNotice />

@@ -1,5 +1,6 @@
 import { describe, expect, it, vi } from "vitest";
 
+import { demoGroup } from "../data/demo-group";
 import { demoAnalysisResult } from "../fixtures";
 import {
   generateRestaurantQuestions,
@@ -12,26 +13,33 @@ describe("material restaurant questions", () => {
     const candidates = identifyQuestionCandidates(
       demoAnalysisResult.menu,
       demoAnalysisResult.compatibility,
+      demoGroup.members,
     );
 
-    expect(candidates.map(({ dishId }) => dishId)).toEqual([
-      "rendang-sapi",
-      "kari-sayur",
+    expect(candidates).toHaveLength(3);
+    expect(candidates.map(({ candidateId }) => candidateId)).toEqual([
+      "rendang-sapi:wildan",
+      "kari-sayur:madhoolika",
+      "kari-sayur:moomina",
     ]);
-    expect(candidates.find(({ dishId }) => dishId === "kari-sayur")).toMatchObject(
-      { memberIds: ["madhoolika", "moomina"] },
-    );
+    expect(candidates.find(({ candidateId }) => candidateId === "kari-sayur:madhoolika")).toMatchObject({
+      memberId: "madhoolika",
+      memberName: "Madhoolika",
+      triggeredRestrictions: ["vegan"],
+    });
+    expect(candidates.some(({ memberId }) => memberId === "harsh")).toBe(false);
   });
 
   it("returns English and detected-language questions for a non-English menu", async () => {
     const model: RestaurantQuestionModel = {
       generate: vi.fn().mockImplementation(({ candidates }) => ({
         questions: candidates.map(
-          ({ dishId, dishName, memberIds }: (typeof candidates)[number]) => ({
+          ({ candidateId, dishId, dishName, memberId, memberName }: (typeof candidates)[number]) => ({
+            candidateId,
             dishId,
-            memberIds,
-            english: `Does ${dishName} contain a restricted ingredient?`,
-            localized: `Apakah ${dishName} mengandung bahan yang dibatasi?`,
+            memberId,
+            english: `For ${memberName}, does ${dishName} contain a restricted ingredient?`,
+            localized: `Untuk ${memberName}, apakah ${dishName} mengandung bahan yang dibatasi?`,
           }),
         ),
       })),
@@ -40,10 +48,12 @@ describe("material restaurant questions", () => {
     const questions = await generateRestaurantQuestions(
       demoAnalysisResult.menu,
       demoAnalysisResult.compatibility,
+      demoGroup.members,
       model,
     );
 
-    expect(questions).toHaveLength(2);
+    expect(questions).toHaveLength(3);
+    expect(questions.every(({ memberIds }) => memberIds.length === 1)).toBe(true);
     expect(questions.every(({ localized }) => Boolean(localized))).toBe(true);
     expect(questions.every(({ languageCode }) => languageCode === "id")).toBe(
       true,
@@ -55,8 +65,9 @@ describe("material restaurant questions", () => {
       generate: vi.fn().mockResolvedValue({
         questions: [
           {
+            candidateId: "rendang-sapi:wildan",
             dishId: "rendang-sapi",
-            memberIds: ["wildan"],
+            memberId: "wildan",
             english: "Is the beef halal-certified and prepared without alcohol?",
             localized: "Duplicate text",
           },
@@ -72,6 +83,7 @@ describe("material restaurant questions", () => {
     const questions = await generateRestaurantQuestions(
       englishMenu,
       demoAnalysisResult.compatibility,
+      demoGroup.members,
       model,
     );
 
@@ -83,8 +95,9 @@ describe("material restaurant questions", () => {
       generate: vi.fn().mockResolvedValue({
         questions: [
           {
+            candidateId: "kari-sayur:madhoolika",
             dishId: "kari-sayur",
-            memberIds: ["invented-member"],
+            memberId: "invented-member",
             english: "Unsupported question",
             localized: "Pertanyaan tidak didukung",
           },
@@ -95,13 +108,16 @@ describe("material restaurant questions", () => {
     const questions = await generateRestaurantQuestions(
       demoAnalysisResult.menu,
       demoAnalysisResult.compatibility,
+      demoGroup.members,
       model,
     );
     const curryQuestion = questions.find(
-      ({ dishId }) => dishId === "kari-sayur",
+      ({ id }) => id === "question-kari-sayur-madhoolika",
     );
 
-    expect(curryQuestion?.memberIds).toEqual(["madhoolika", "moomina"]);
+    expect(curryQuestion?.memberIds).toEqual(["madhoolika"]);
     expect(curryQuestion?.english).not.toBe("Unsupported question");
+    expect(curryQuestion?.english).toContain("Madhoolika");
+    expect(curryQuestion?.english).toContain("vegan");
   });
 });

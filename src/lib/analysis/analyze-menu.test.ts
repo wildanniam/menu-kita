@@ -82,8 +82,9 @@ function dependencies(
       generate: vi.fn().mockResolvedValue({
         questions: [
           {
+            candidateId: "kari-sayur:guest",
             dishId: "kari-sayur",
-            memberIds: ["guest"],
+            memberId: "guest",
             english: "Does the curry contain fish sauce or another animal product?",
             localized: "Apakah kari mengandung saus ikan atau produk hewani lain?",
           },
@@ -122,7 +123,7 @@ describe("analyzeMenu", () => {
     expect(result.compatibility).toHaveLength(1);
     expect(result.restaurantQuestions).toHaveLength(1);
     expect(result.recommendations.bestForEveryone?.questionIds).toEqual([
-      "question-kari-sayur-1",
+      "question-kari-sayur-guest",
     ]);
   });
 

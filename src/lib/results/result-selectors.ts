@@ -1,5 +1,6 @@
 import type {
   AnalysisResult,
+  FoodProfile,
   MemberDishCompatibility,
   MemberRecommendation,
   RestaurantQuestion,
@@ -74,4 +75,21 @@ export function getQuestionsForSelection(
   return result.restaurantQuestions.filter((question) =>
     question.memberIds.includes(selection),
   );
+}
+
+export function getQuestionMemberNames(
+  question: RestaurantQuestion,
+  profiles: FoodProfile[],
+): string[] {
+  const namesById = new Map(profiles.map((profile) => [profile.id, profile.name]));
+  return question.memberIds.flatMap((memberId) => {
+    const name = namesById.get(memberId);
+    return name ? [name] : [];
+  });
+}
+
+export function shouldShowRestaurantQuestions(
+  questions: RestaurantQuestion[],
+): boolean {
+  return questions.length > 0;
 }

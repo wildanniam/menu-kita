@@ -187,6 +187,7 @@ export async function analyzeMenu(
   const restaurantQuestions = await generateRestaurantQuestions(
     menu,
     compatibility,
+    input.profiles,
     dependencies.questionGenerator,
   );
   const result = attachRecommendationQuestions(

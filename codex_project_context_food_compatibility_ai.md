@@ -18,7 +18,7 @@ These decisions supersede earlier exploratory alternatives elsewhere in this doc
 - Automatic halal-certificate lookup is excluded from the MVP. Missing certification is not a negative food signal; explicit ingredients and source-backed common usage drive the existing conflict/confirmation rules.
 - The agent uses explicit TypeScript orchestration with the OpenAI and Tavily SDKs, Zod validation, and deterministic restriction rules; LangChain is not used.
 - The active OpenSpec change at `openspec/changes/build-menukita-group-demo/` is authoritative for implementation behavior, design, and tasks.
-- Results use a current-user-first member switcher plus an `All` overview; member preferences, recommendations, compatibility details, and relevant restaurant questions stay scoped to the active selection.
+- Results use a current-user-first member switcher plus an `All` overview; member preferences, recommendations, compatibility details, and relevant restaurant questions stay scoped to the active selection. Restaurant questions are generated per member and dish from that person's material unresolved hard restrictions, omitted when the selected member has none, and labeled by affected member in the `All` overview.
 - The supplied MenuKita logo is used as a transparent lockup and the supplied food illustration repeats as a non-stretched background behind readable content surfaces. Preferences, Group, Scan, and Results use one shared responsive shell so visual changes stay consistent across the full demo journey.
 - Final preset group details, brand system, and demo images will be supplied before their corresponding implementation tasks.
 

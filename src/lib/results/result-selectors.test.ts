@@ -1,13 +1,16 @@
 import { describe, expect, it } from "vitest";
 
 import { demoAnalysisResult } from "../fixtures/demo-analysis";
+import { demoGroup } from "../data/demo-group";
 
 import {
   ALL_MEMBERS_SELECTION,
   getMemberCompatibility,
   getMemberRecommendation,
   getQuestionsForSelection,
+  getQuestionMemberNames,
   getRowsByDish,
+  shouldShowRestaurantQuestions,
 } from "./result-selectors";
 
 describe("result presentation selectors", () => {
@@ -26,6 +29,31 @@ describe("result presentation selectors", () => {
     expect(
       getQuestionsForSelection(demoAnalysisResult, ALL_MEMBERS_SELECTION),
     ).toEqual(demoAnalysisResult.restaurantQuestions);
+  });
+
+  it("resolves affected-member labels for the All overview", () => {
+    const questions = getQuestionsForSelection(
+      demoAnalysisResult,
+      ALL_MEMBERS_SELECTION,
+    );
+
+    expect(getQuestionMemberNames(questions[0], demoGroup.members)).toEqual([
+      "Madhoolika",
+      "Moomina",
+    ]);
+  });
+
+  it("omits the question section when the current selection has no questions", () => {
+    expect(
+      shouldShowRestaurantQuestions(
+        getQuestionsForSelection(demoAnalysisResult, "wildan"),
+      ),
+    ).toBe(false);
+    expect(
+      shouldShowRestaurantQuestions(
+        getQuestionsForSelection(demoAnalysisResult, "madhoolika"),
+      ),
+    ).toBe(true);
   });
 
   it("groups the complete compatibility matrix by dish", () => {

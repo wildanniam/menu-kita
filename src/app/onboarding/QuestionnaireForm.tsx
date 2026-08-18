@@ -2,7 +2,13 @@
 
 import { XIcon } from "lucide-react";
 import { useRouter } from "next/navigation";
-import { useId, useRef, useState } from "react";
+import {
+  forwardRef,
+  useId,
+  useImperativeHandle,
+  useRef,
+  useState,
+} from "react";
 import type { ReactNode } from "react";
 
 import { Badge } from "@/components/ui/badge";
@@ -114,21 +120,27 @@ function DietaryQuickAddChips({
 
 const CURRENT_USER_ID = "current-user";
 
-function TagListInput({
-  label,
-  placeholder,
-  values,
-  onChange,
-  quickAdd,
-}: {
-  label: string;
-  placeholder: string;
-  values: string[];
-  onChange: (values: string[]) => void;
-  quickAdd?: ReactNode;
-}) {
+export interface TagListInputHandle {
+  /** Returns any typed-but-not-added text, so callers can include it before it's lost. */
+  getPendingDraft: () => string;
+}
+
+const TagListInput = forwardRef<
+  TagListInputHandle,
+  {
+    label: string;
+    placeholder: string;
+    values: string[];
+    onChange: (values: string[]) => void;
+    quickAdd?: ReactNode;
+  }
+>(function TagListInput({ label, placeholder, values, onChange, quickAdd }, ref) {
   const [draft, setDraft] = useState("");
   const inputId = useId();
+
+  useImperativeHandle(ref, () => ({
+    getPendingDraft: () => draft,
+  }));
 
   function commitDraft() {
     const next = draft.trim();
@@ -201,7 +213,7 @@ function TagListInput({
       )}
     </Field>
   );
-}
+});
 
 export function QuestionnaireForm() {
   const savedProfile = useCurrentUserProfile();
@@ -235,8 +247,22 @@ function QuestionnaireFormInner({
   const mediumIconRef = useRef<SoupIconHandle>(null);
   const spicyIconRef = useRef<FlameIconHandle>(null);
 
+  const dietaryRequirementsInputRef = useRef<TagListInputHandle>(null);
+  const allergiesInputRef = useRef<TagListInputHandle>(null);
+  const likesInputRef = useRef<TagListInputHandle>(null);
+  const dislikesInputRef = useRef<TagListInputHandle>(null);
+
   function updateTagList(field: TagListField, values: string[]) {
     setTagLists((prev) => ({ ...prev, [field]: values }));
+  }
+
+  /** Includes any typed-but-not-added text so switching fields or submitting doesn't silently drop it. */
+  function withPendingDraft(values: string[], ref: React.RefObject<TagListInputHandle | null>) {
+    const pending = ref.current?.getPendingDraft().trim();
+    if (!pending || values.includes(pending)) {
+      return values;
+    }
+    return [...values, pending];
   }
 
   function getSpiceIconRef(value: SpiceTolerance) {
@@ -274,11 +300,14 @@ function QuestionnaireFormInner({
       id: CURRENT_USER_ID,
       name: name.trim(),
       isCurrentUser: true,
-      dietaryRequirements: tagLists.dietaryRequirements,
-      allergies: tagLists.allergies,
+      dietaryRequirements: withPendingDraft(
+        tagLists.dietaryRequirements,
+        dietaryRequirementsInputRef,
+      ),
+      allergies: withPendingDraft(tagLists.allergies, allergiesInputRef),
       spiceTolerance: spiceTolerance === "" ? "spicy" : spiceTolerance,
-      likes: tagLists.likes,
-      dislikes: tagLists.dislikes,
+      likes: withPendingDraft(tagLists.likes, likesInputRef),
+      dislikes: withPendingDraft(tagLists.dislikes, dislikesInputRef),
     });
 
     saveCurrentUserProfile(profile);
@@ -344,6 +373,7 @@ function QuestionnaireFormInner({
       </Field>
 
       <TagListInput
+        ref={dietaryRequirementsInputRef}
         label="Dietary requirements"
         placeholder="Others"
         values={tagLists.dietaryRequirements}
@@ -357,6 +387,7 @@ function QuestionnaireFormInner({
       />
 
       <TagListInput
+        ref={allergiesInputRef}
         label="Allergies"
         placeholder="e.g. peanuts, shellfish"
         values={tagLists.allergies}
@@ -364,6 +395,7 @@ function QuestionnaireFormInner({
       />
 
       <TagListInput
+        ref={likesInputRef}
         label="Likes"
         placeholder="Dishes or ingredients"
         values={tagLists.likes}
@@ -371,6 +403,7 @@ function QuestionnaireFormInner({
       />
 
       <TagListInput
+        ref={dislikesInputRef}
         label="Dislikes"
         placeholder="Dishes or ingredients"
         values={tagLists.dislikes}

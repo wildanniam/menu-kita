@@ -38,6 +38,8 @@ The server-only GPT-4o mini adapter lives in `src/lib/server/openai-menu-extract
 
 Bounded dish research is exposed through `src/lib/research/dish-research.ts` and instantiated with the server-only Tavily credential in `src/lib/server/tavily-research.ts`. Provider errors degrade to an unavailable result rather than aborting analysis.
 
+Deterministic hard-restriction evaluation lives in `src/lib/compatibility/restrictions.ts`. It normalizes a bounded English/Indonesian ingredient vocabulary, preserves evidence IDs, and applies conflict/confirmation/information precedence independently from preference scoring.
+
 ## Locked prototype scope
 
 - English, responsive group-only web experience

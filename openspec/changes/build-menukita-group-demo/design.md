@@ -67,6 +67,8 @@ Normalize common ingredient aliases before applying deterministic member rules. 
 
 Preference scoring is calculated separately and cannot change that status. Group ranking first minimizes conflicts and confirmation burden, then considers aggregated preference fit.
 
+The deterministic baseline recognizes the demo group's vegan, no-beef, seafood-allergy, lactose-intolerance, and halal requirements plus common no-pork, vegetarian, shellfish, egg, gluten, nut, sesame, and soy inputs. Keep the alias vocabulary deliberately bounded to common English and Indonesian menu terms. Plant milks such as coconut milk must not be treated as dairy. An unrecognized hard requirement must produce `needs_confirmation` rather than silently passing as compatible. For halal profiles, explicitly listed pork or alcohol is a conflict, while unconfirmed meat sourcing or preparation requires confirmation.
+
 ### Security and data handling
 
 Keep `OPENAI_API_KEY` and `TAVILY_API_KEY` in server-only environment variables. Validate file type and size before forwarding an image, validate all request bodies, avoid logging profile/image content, and add basic request limits suitable for a public demo deployment.
@@ -87,8 +89,9 @@ Keep the approved group values in one typed data module so replacing restriction
 
 - Next.js, TypeScript, Tailwind CSS, linting, tests, and production build are operational.
 - OpenAI and Tavily credentials are present locally and authentication smoke checks pass.
-- Server environment validation and shared Zod contracts are implemented.
-- No onboarding, group flow, upload flow, AI adapter, research adapter, compatibility engine, results UI, or deployment exists yet.
+- Server environment validation, shared Zod contracts, typed fixtures, and preset group data are implemented.
+- Structured GPT-4o mini extraction, the bounded Tavily provider, and deterministic hard-restriction evaluation are implemented and unit-tested.
+- No onboarding, group flow, upload flow, research planner, preference/ranking engine, live analysis route, results UI, or deployment exists yet.
 
 ### Delivery graph
 

@@ -1,7 +1,6 @@
 "use client";
 
 import Link from "next/link";
-import { useState } from "react";
 
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
@@ -93,30 +92,7 @@ function MemberCard({ member }: { member: FoodProfile }) {
   );
 }
 
-function GroupSelection({ onSelect }: { onSelect: () => void }) {
-  return (
-    <div className="flex flex-col gap-4 rounded-xl border-2 border-dashed bg-white p-6" style={{ borderColor: PALETTE.oliveLeaf }}>
-      <div className="flex flex-col gap-1">
-        <h2 className="text-xl font-semibold text-neutral-900">Global Friends</h2>
-        <p className="text-sm text-neutral-600">
-          Five friends finding dishes everyone can enjoy.
-        </p>
-      </div>
-      <Button
-        type="button"
-        onClick={onSelect}
-        style={{ backgroundColor: PALETTE.oliveLeaf }}
-        className="w-fit border-transparent text-white hover:opacity-90"
-      >
-        Select group
-      </Button>
-    </div>
-  );
-}
-
 function GroupSummary({ group }: { group: Group }) {
-  const [scanRequested, setScanRequested] = useState(false);
-
   return (
     <div className="flex flex-col gap-6">
       <div className="flex flex-col gap-1">
@@ -134,25 +110,18 @@ function GroupSummary({ group }: { group: Group }) {
 
       <Button
         type="button"
-        onClick={() => setScanRequested(true)}
+        render={<Link href="/scan" />}
         style={{ backgroundColor: PALETTE.rustySpice }}
         className="w-full border-transparent text-white hover:opacity-90 sm:w-auto"
       >
         Start menu scan
       </Button>
-
-      {scanRequested && (
-        <p role="status" style={{ color: PALETTE.oliveLeaf }} className="text-sm font-medium">
-          Group confirmed. Menu upload isn&apos;t built yet.
-        </p>
-      )}
     </div>
   );
 }
 
 export function GroupOverview() {
   const profile = useCurrentUserProfile();
-  const [groupSelected, setGroupSelected] = useState(false);
 
   if (!profile) {
     return (
@@ -169,10 +138,6 @@ export function GroupOverview() {
         </Button>
       </div>
     );
-  }
-
-  if (!groupSelected) {
-    return <GroupSelection onSelect={() => setGroupSelected(true)} />;
   }
 
   return <GroupSummary group={buildDemoGroup(profile)} />;

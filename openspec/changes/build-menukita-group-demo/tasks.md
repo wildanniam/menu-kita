@@ -23,7 +23,7 @@
 
 ## 3. Menu extraction
 
-- [ ] 3.1 **[Moomina/UI]** Build menu image selection, validation, preview, removal, and retry states
+- [x] 3.1 **[Moomina/UI]** Build menu image selection, validation, preview, removal, and retry states
 - [x] 3.2 **[Wildan/Core]** Implement the server-only OpenAI adapter and structured GPT-4o mini menu extraction
 - [x] 3.3 **[Wildan/Core]** Validate extraction output, preserve unreadable fields, and add one controlled schema-repair attempt
 

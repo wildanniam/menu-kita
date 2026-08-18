@@ -46,6 +46,8 @@ Research evidence normalization lives in `src/lib/research/evidence-normalizer.t
 
 Preference evaluation in `src/lib/compatibility/preferences.ts` receives no dietary restrictions, validates every explanation basis, and combines its score with the independently computed hard status without allowing the score to change that status.
 
+Group and per-member ranking lives in `src/lib/compatibility/recommendations.ts`. It rejects incomplete matrices, excludes conflicts from member fallbacks, and ranks group candidates by conflicts, confirmation burden, evidence sufficiency, then preference fit.
+
 ## Locked prototype scope
 
 - English, responsive group-only web experience

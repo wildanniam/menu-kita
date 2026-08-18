@@ -178,49 +178,16 @@ export function ResultsView() {
       (member) => evaluationByMember[member.id][dish.id].status === "compatible",
     ),
   );
-  const bestForEveryone = everyoneCanHave[0] ?? null;
-
-  function bestDishForMember(memberId: string): Dish | null {
-    return (
-      dummyMenuDishes.find(
-        (dish) => evaluationByMember[memberId][dish.id].status === "compatible",
-      ) ?? null
-    );
-  }
 
   const activeMember: FoodProfile | undefined = group.members.find(
     (member) => member.id === activeTab,
   );
-  const activeMemberBestDish = activeMember
-    ? bestDishForMember(activeMember.id)
-    : null;
 
   return (
     <div className="flex flex-col gap-4">
       <p className="w-fit rounded-lg bg-white/90 px-3 py-1.5 text-xs text-neutral-500">
-        Using a sample menu for this demo &mdash; live photo scanning isn&apos;t
-        connected yet. Results below use the real compatibility rules.
+        Sample menu &mdash; live scanning isn&apos;t connected yet.
       </p>
-
-      <div
-        className="rounded-lg border-2 bg-white px-4 py-3"
-        style={{ borderColor: PALETTE.oliveLeaf }}
-      >
-        {bestForEveryone ? (
-          <p className="text-sm text-neutral-800">
-            <span className="font-semibold" style={{ color: PALETTE.oliveLeaf }}>
-              Best for everyone:
-            </span>{" "}
-            {bestForEveryone.originalName} &mdash; no one in the group has a
-            hard conflict with this dish.
-          </p>
-        ) : (
-          <p className="text-sm text-neutral-800">
-            No single dish works for the whole group yet &mdash; check each
-            person&apos;s tab for what they can have instead.
-          </p>
-        )}
-      </div>
 
       <ToggleGroup
         value={[activeTab]}
@@ -268,39 +235,27 @@ export function ResultsView() {
             </ul>
           ) : (
             <p className="text-sm text-neutral-600">
-              No single dish works for the whole group &mdash; check individual
-              tabs for what each person can eat.
+              No dish works for everyone &mdash; check individual tabs.
             </p>
           )}
         </div>
       ) : (
         activeMember && (
-          <div className="flex flex-col gap-2">
-            {activeMemberBestDish && activeMemberBestDish !== bestForEveryone && (
-              <p className="text-sm text-neutral-600">
-                Best pick for {activeMember.name}:{" "}
-                <span className="font-semibold text-green-700">
-                  {activeMemberBestDish.originalName}
-                </span>
-              </p>
-            )}
-            <ul className="flex flex-col gap-2">
-              {dummyMenuDishes.map((dish) => (
-                <DishRow
-                  key={dish.id}
-                  dish={dish}
-                  evaluation={evaluationByMember[activeMember.id][dish.id]}
-                />
-              ))}
-            </ul>
-          </div>
+          <ul className="flex flex-col gap-2">
+            {dummyMenuDishes.map((dish) => (
+              <DishRow
+                key={dish.id}
+                dish={dish}
+                evaluation={evaluationByMember[activeMember.id][dish.id]}
+              />
+            ))}
+          </ul>
         )
       )}
 
       <p className="rounded-lg bg-white/90 px-3 py-2 text-xs text-neutral-500">
-        This app can&apos;t guarantee allergy or religious dietary safety.
-        Always confirm directly with restaurant staff, especially for severe
-        allergies.
+        Not a guarantee of allergy or religious safety &mdash; confirm with
+        staff.
       </p>
     </div>
   );

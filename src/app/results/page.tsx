@@ -1,4 +1,5 @@
 import { FlowNav } from "@/components/FlowNav";
+import { ResetJourneyButton } from "@/components/ResetJourneyButton";
 import { ResultsView } from "./ResultsView";
 
 const DECORATIVE_DOTS = ["#AD390B", "#385610", "#D97706", "#7C2D12"];
@@ -11,7 +12,10 @@ export default function ResultsPage() {
     >
       <div className="flex w-full max-w-xl flex-col gap-6 sm:gap-8">
         <div className="flex flex-col gap-3">
-          <FlowNav current="/results" />
+          <div className="flex flex-wrap items-center justify-between gap-2">
+            <FlowNav current="/results" />
+            <ResetJourneyButton />
+          </div>
           <div className="flex gap-1.5" aria-hidden="true">
             {DECORATIVE_DOTS.map((color) => (
               <span

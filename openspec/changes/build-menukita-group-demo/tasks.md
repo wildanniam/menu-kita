@@ -18,8 +18,8 @@
 
 - [x] 2.1 **[Wildan/Core]** Add the replaceable preset group data module using the approved five-person group
 - [x] 2.2 **[Moomina/UI]** Build the English onboarding questionnaire with validation and browser persistence
-- [x] 2.3 **[Moomina/UI]** Build existing-group selection and a group overview combining the current user with preset members
-- [ ] 2.4 **[Moomina/UI]** Add navigation, reset, and reload behavior for the complete pre-scan journey
+- [x] 2.3 **[Moomina/UI]** Build the existing-group overview combining the current user with preset members (no manual selection step; there is only one demo group)
+- [x] 2.4 **[Moomina/UI]** Add navigation, reset, and reload behavior for the complete pre-scan journey
 
 ## 3. Menu extraction
 

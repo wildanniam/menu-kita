@@ -1,22 +1,22 @@
 ## ADDED Requirements
 
 ### Requirement: Current-user questionnaire
-The application SHALL collect the current user's name, dietary requirements, allergies, spice tolerance, likes, and dislikes before group selection.
+The application SHALL collect the current user's name, dietary requirements, allergies, spice tolerance, likes, and dislikes before the group overview.
 
 #### Scenario: Complete questionnaire
 - **WHEN** the user supplies all required questionnaire fields and continues
-- **THEN** the application stores a normalized current-user profile in browser storage and opens group selection
+- **THEN** the application stores a normalized current-user profile in browser storage and opens the group overview
 
 #### Scenario: Missing required information
 - **WHEN** the user attempts to continue without required profile information
 - **THEN** the application remains on the questionnaire and identifies the fields that need attention
 
-### Requirement: Existing demo group selection
-The application SHALL offer an existing demo group without requiring authentication, invitation acceptance, or group creation.
+### Requirement: Existing demo group
+The application SHALL use a single existing demo group without requiring authentication, invitation acceptance, group creation, or a manual selection step, since only one group exists for this prototype.
 
-#### Scenario: Join the demo group
-- **WHEN** the user selects the available demo group
-- **THEN** the application opens the group overview with the current user and all source-controlled demo members
+#### Scenario: Continue to the demo group
+- **WHEN** the user completes the questionnaire
+- **THEN** the application opens the group overview directly, combining the current user with all source-controlled demo members
 
 ### Requirement: Group overview
 The application SHALL summarize each member's hard restrictions and relevant preferences before menu analysis.

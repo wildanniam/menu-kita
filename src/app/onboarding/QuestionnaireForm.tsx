@@ -179,7 +179,7 @@ const TagListInput = forwardRef<
           }}
         />
         <InputGroupAddon align="inline-end">
-          <AnimatedButton type="button" size="sm" onClick={commitDraft}>
+          <AnimatedButton type="button" size="xs" onClick={commitDraft}>
             Add
           </AnimatedButton>
         </InputGroupAddon>
@@ -404,7 +404,9 @@ function QuestionnaireFormInner({
         onChange={(values) => updateTagList("dislikes", values)}
       />
 
-      <AnimatedButton type="submit">Continue</AnimatedButton>
+      <div className="flex justify-center">
+        <AnimatedButton type="submit">Continue</AnimatedButton>
+      </div>
     </form>
   );
 }

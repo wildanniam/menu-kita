@@ -7,6 +7,14 @@ import "./animated-button.css";
 const ARROW_PATH =
   "M16.1716 10.9999L10.8076 5.63588L12.2218 4.22167L20 11.9999L12.2218 19.7781L10.8076 18.3639L16.1716 12.9999H4V10.9999H16.1716Z";
 
+type AnimatedButtonSize = "default" | "sm" | "xs";
+
+const SIZE_CLASS: Record<AnimatedButtonSize, string | null> = {
+  default: null,
+  sm: "animated-button--sm",
+  xs: "animated-button--xs",
+};
+
 function AnimatedButtonArrows({ children }: { children: ReactNode }) {
   return (
     <>
@@ -27,15 +35,11 @@ export function AnimatedButton({
   className,
   size = "default",
   ...props
-}: ButtonHTMLAttributes<HTMLButtonElement> & { size?: "default" | "sm" }) {
+}: ButtonHTMLAttributes<HTMLButtonElement> & { size?: AnimatedButtonSize }) {
   return (
     <button
       {...props}
-      className={cn(
-        "animated-button",
-        size === "sm" && "animated-button--sm",
-        className,
-      )}
+      className={cn("animated-button", SIZE_CLASS[size], className)}
     >
       <AnimatedButtonArrows>{children}</AnimatedButtonArrows>
     </button>
@@ -50,17 +54,13 @@ export function AnimatedLinkButton({
   ...props
 }: AnchorHTMLAttributes<HTMLAnchorElement> & {
   href: string;
-  size?: "default" | "sm";
+  size?: AnimatedButtonSize;
 }) {
   return (
     <Link
       href={href}
       {...props}
-      className={cn(
-        "animated-button",
-        size === "sm" && "animated-button--sm",
-        className,
-      )}
+      className={cn("animated-button", SIZE_CLASS[size], className)}
     >
       <AnimatedButtonArrows>{children}</AnimatedButtonArrows>
     </Link>

@@ -135,3 +135,48 @@
 .animated-button.animated-button--sm:hover .arr-2 {
   left: 10px;
 }
+
+.animated-button.animated-button--xs {
+  gap: 2px;
+  padding: 4px 12px;
+  border-width: 2px;
+  font-size: 12px;
+}
+
+.animated-button.animated-button--xs .arr-1,
+.animated-button.animated-button--xs .arr-2 {
+  width: 13px;
+}
+
+.animated-button.animated-button--xs .text svg {
+  width: 11px;
+}
+
+.animated-button.animated-button--xs .arr-1 {
+  right: 8px;
+}
+
+.animated-button.animated-button--xs .arr-2 {
+  left: -25%;
+}
+
+.animated-button.animated-button--xs:hover {
+  border-radius: 8px;
+}
+
+.animated-button.animated-button--xs:hover .arr-1 {
+  right: -25%;
+}
+
+.animated-button.animated-button--xs:hover .arr-2 {
+  left: 8px;
+}
+
+.animated-button.animated-button--xs:hover .circle {
+  width: 140px;
+  height: 140px;
+}
+
+.animated-button.animated-button--xs:active {
+  box-shadow: 0 0 0 3px var(--animated-button-accent);
+}

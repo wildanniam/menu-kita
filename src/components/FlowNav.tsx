@@ -15,7 +15,10 @@ const STEPS = [
 
 export function FlowNav({ current }: { current: (typeof STEPS)[number]["href"] }) {
   return (
-    <nav aria-label="Flow steps" className="flex flex-wrap gap-2">
+    <nav
+      aria-label="Flow steps"
+      className="flex gap-5 overflow-x-auto border-b border-neutral-300"
+    >
       {STEPS.map((step) => {
         const active = step.href === current;
         return (
@@ -23,14 +26,10 @@ export function FlowNav({ current }: { current: (typeof STEPS)[number]["href"] }
             key={step.href}
             href={step.href}
             aria-current={active ? "page" : undefined}
-            style={
-              active
-                ? { backgroundColor: PALETTE.rustySpice, borderColor: PALETTE.rustySpice }
-                : { borderColor: PALETTE.rustySpice }
-            }
+            style={active ? { color: PALETTE.rustySpice, borderColor: PALETTE.rustySpice } : undefined}
             className={cn(
-              "rounded-full border-2 bg-white px-3 py-1.5 text-sm font-medium transition-colors",
-              active ? "text-white" : "text-neutral-700 hover:bg-neutral-50",
+              "shrink-0 border-b-2 border-transparent pb-2 text-sm font-semibold tracking-wide uppercase transition-colors",
+              active ? "" : "text-neutral-500 hover:text-neutral-800",
             )}
           >
             {step.label}

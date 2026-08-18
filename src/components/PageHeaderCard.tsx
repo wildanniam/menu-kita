@@ -23,7 +23,7 @@ export function PageHeaderCard({
           width={210}
           height={104}
           priority
-          className="h-9 w-auto sm:h-10"
+          className="h-9 w-auto self-start sm:h-10"
         />
         {nav}
       </div>

@@ -19,11 +19,10 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
       <body
         className={appFont.className}
         style={{
-          backgroundImage: "url(/food-pattern.jpg)",
+          backgroundImage: "url(/food-pattern-joined.jpg)",
           backgroundRepeat: "no-repeat",
           backgroundSize: "cover",
-          backgroundPosition: "center",
-          backgroundAttachment: "fixed",
+          backgroundPosition: "center top",
         }}
       >
         {children}

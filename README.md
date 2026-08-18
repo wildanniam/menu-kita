@@ -2,7 +2,7 @@
 
 MenuKita is an AI food compatibility assistant for groups navigating unfamiliar menus. A user completes a short food-profile questionnaire, joins a preset demo group, uploads a menu image, and receives evidence-aware recommendations for the whole group and each member.
 
-This repository contains the shared Next.js starter, typed domain contracts, and OpenSpec implementation plan. Product UI and agent integrations are developed against those contracts.
+This repository contains the MenuKita Next.js prototype, typed domain contracts, UI flow, server-side agent workflow, and OpenSpec implementation plan.
 
 ## Local development
 
@@ -115,7 +115,7 @@ The full normative policy is defined by [`AGENTS.md`](./AGENTS.md) and the [`ope
 
 ## Current collaboration inputs
 
-- Moomina is researching the brand system and visual direction and is expected to lead UI presentation work.
+- Moomina's onboarding, group, upload, navigation, and partial fixture-backed results UI are merged; live API progress/results integration and the final presentation pass remain.
 - The five-member demo group is approved; Wildan will provide primary/backup demo menu images and the team can add final avatar assets later.
 - The implementation task list deliberately isolates those inputs from domain and agent architecture.
 

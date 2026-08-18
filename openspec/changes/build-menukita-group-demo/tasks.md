@@ -54,7 +54,7 @@
 - [x] 7.2 **[Wildan/Core]** Add API input limits, safe error responses, basic request throttling, and checks preventing secret exposure
 - [x] 7.3 **[Wildan/Core]** Add integration tests for questionnaire-to-group flow and agent fallback behavior using deterministic fixtures
 - [ ] 7.4 **[Wildan/Core]** Run lint, type checks, tests, production build, and browser checks across mobile and desktop widths
-  - Core verification currently passes: lint, typecheck, 59 automated tests, production build, and placeholder-page smoke checks at 390×844 and 1440×900 with no browser console errors.
-  - Final full-journey browser verification remains open until tasks 2.2–2.4, 3.1, 6.1–6.2, 6.4, and 7.1 are integrated from the UI workstream.
+  - Post-merge verification passes: lint, typecheck, 59 automated tests, production build, and the fixture-backed onboarding → group → upload → results journey at 390×844 and 1440×900 with no browser console errors.
+  - Final live-analysis browser verification remains open until the streamed API is integrated and tasks 2.4, 6.1–6.2, 6.4, and 7.1 are complete.
 - [ ] 7.5 **[Shared]** Verify the exact primary and backup menu images with the approved group profiles and document the live demo sequence and fallback plan
 - [ ] 7.6 **[Shared]** After explicit authorization, configure Vercel environment variables, deploy, and smoke-test the production demo
